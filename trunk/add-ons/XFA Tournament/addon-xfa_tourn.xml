@@ -1,0 +1,2475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="xfa_tourn" title="[XFA] Tournament" version_string="2.2.1" version_id="902020190" url="http://www.xen-factory.com" install_callback_class="XFA_Tournament_Install" install_callback_method="install" uninstall_callback_class="XFA_Tournament_Install" uninstall_callback_method="uninstall">
+  <admin_navigation>
+    <navigation navigation_id="xfa_tourn" parent_navigation_id="applications" display_order="10000" link="" admin_permission_id="node" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="xfa_tourn_categories" parent_navigation_id="xfa_tourn" display_order="1" link="tournament-categories" admin_permission_id="node" debug_only="0" hide_no_children="0"/>
+  </admin_navigation>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="xfa_tourn_category_delete"><![CDATA[<xen:title>{xen:phrase confirm_deletion_of_category}: {$category.title}</xen:title>
+<xen:h1>{xen:phrase confirm_deletion_of_category}</xen:h1>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:adminlink 'tournament-categories/edit', $category}">{$category.category_title}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:require css="public:delete_confirmation.css" />
+
+<xen:form action="{xen:adminlink 'tournament-categories/delete'}" class="deleteConfirmForm formOverlay">
+
+	<p>{xen:phrase please_confirm_that_you_want_to_delete_following_category}:</p>
+	<strong><a href="{xen:adminlink 'tournament-categories/edit', $category}">{$category.category_title}</a></strong>
+
+	<xen:include template="helper_node_delete_children" />
+
+	<input type="hidden" name="tournament_category_id" value="{$category.tournament_category_id}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+
+	<xen:submitunit save="{xen:phrase delete_category}" />
+</xen:form>]]></template>
+    <template title="xfa_tourn_category_delete_clean_up"><![CDATA[<xen:title>{xen:phrase xfa_tourn_cleaning_up_tournaments}...</xen:title>
+
+{xen:phrase xfa_tourn_cleaning_up_tournaments}... <img src="{xen:property imagePath}/xenforo/widgets/ajaxload.info_000000_facebook.gif" alt="{xen:phrase loading}..." id="loadingImage" style="display:none" />
+
+<form action="{xen:adminlink tournament-categories/delete-clean-up}" method="post" id="continueForm">
+	<input type="submit" value="{xen:phrase continue}" class="button" />
+	
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="tournament_category_id" value="{$tournament_category_id}" />
+</form>
+
+<script>
+$(function() {
+	$('#continueForm').submit();
+	$('#continueForm .button').hide();
+	$('#loadingImage').show();
+});
+</script>]]></template>
+    <template title="xfa_tourn_category_edit"><![CDATA[<xen:title>{xen:if '{$category.tournament_category_id}', '{xen:phrase edit_category}: {$category.category_title}', '{xen:phrase create_new_category}'}</xen:title>
+
+<xen:if is="{$category.tournament_category_id}">
+	<xen:navigation>
+		<xen:breadcrumb href="{xen:adminlink 'tournament-categories/edit', $category}">{$category.category_title}</xen:breadcrumb>
+	</xen:navigation>
+</xen:if>
+
+<xen:form action="{xen:adminlink tournament-categories/save, $category}" class="AutoValidator" data-redirect="on">
+
+	<fieldset>
+		<xen:textboxunit label="{xen:phrase title}:" name="category_title" value="{$category.category_title}" data-liveTitleTemplate="{xen:if {$category.category_title},
+			'{xen:phrase edit_category}: <em>%s</em>',
+			'{xen:phrase create_new_category}: <em>%s</em>'}" />
+			
+		<xen:textboxunit label="{xen:phrase description}:" name="category_description" value="{$category.category_description}" rows="2" inputclass="Elastic">
+			<xen:explain>{xen:phrase you_may_use_html}</xen:explain>
+		</xen:textboxunit>
+
+		<xen:textboxunit label="{xen:phrase display_order}:" name="display_order" value="{$category.display_order}" />
+	</fieldset>
+	
+	<fieldset>
+		<xen:controlunit label="{xen:phrase xfa_tourn_automatically_create_thread_in_forum}:">
+			<xen:html><select name="thread_node_id" class="textCtrl" id="ctrl_node_id">
+				<option value="">&nbsp;</option>
+				<xen:foreach loop="$nodes" value="$node">
+					<option value="{$node.node_id}" {xen:selected '{$node.node_id} == {$category.thread_node_id}'} {xen:if "{$node.node_type_id} != 'Forum'", 'disabled="disabled"'}>{xen:string repeat, '&nbsp; ', $node.depth}{$node.title}</option>
+				</xen:foreach>
+			</select></xen:html>
+			<xen:explain>{xen:phrase xfa_tourn_created_thread_explain}</xen:explain>
+		</xen:controlunit>
+		
+		<xen:require js="js/xenforo/title_prefix.js" />
+		<xen:require css="public:title_prefix_edit.css" />
+		<xen:require css="public:thread_prefixes.css" />
+		
+		<div id="PrefixContainer">
+			<xen:selectunit name="thread_prefix_id" value="{$category.thread_prefix_id}" label="{xen:phrase prefix}:"
+				inputclass="TitlePrefix"
+				data-container="#PrefixContainer"
+				data-textbox="#ctrl_title_template"
+				data-nodecontrol="#ctrl_node_id"
+				data-prefixurl="{xen:adminlink forums/prefixes}">
+				<xen:option value="0" label="({xen:phrase no_prefix})" data-css="" />
+				<xen:options source="{$threadPrefixes}" />
+				<xen:explain>{xen:phrase xfa_tourn_automatically_created_thread_will_be_given_this_prefix}</xen:explain>
+			</xen:selectunit>
+		</div>
+	</fieldset>		
+
+	<xen:submitunit save="{xen:phrase save_category}">
+		<xen:if is="{$category.tournament_category_id}">
+			<input type="button" value="{xen:phrase delete_category}..." accesskey="d" class="button OverlayTrigger"
+				data-href="{xen:adminlink 'tournament-categories/delete', $category}" />
+		</xen:if>
+	</xen:submitunit>
+</xen:form>]]></template>
+    <template title="xfa_tourn_category_list"><![CDATA[<xen:title>{xen:phrase xfa_tourn_tournament_categories}</xen:title>
+
+<xen:topctrl><a href="{xen:adminlink tournament-categories/add}" class="button">+ {xen:phrase create_new_category}</a></xen:topctrl>
+
+<xen:require css="filter_list.css" />
+<xen:require js="js/xenforo/filter_list.js" />
+
+<xen:form action="{xen:adminlink tournament-categories}" class="section">
+	<xen:if is="{$categories}">
+
+		<h2 class="subHeading">
+			<xen:include template="filter_list_controls" />
+			{xen:phrase xfa_tourn_tournament_categories}
+		</h2>
+
+		<ol class="FilterList Scrollable">
+			<xen:foreach loop="$categories" value="$category">
+				<xen:listitem
+					id="{$category.tournament_category_id}"
+					label="{$category.category_title}"
+					href="{xen:adminlink 'tournament-categories/edit', $category}"
+					delete="{xen:adminlink 'tournament-categories/delete', $category}"
+					class="_depth{$category.depth}" />
+			</xen:foreach>
+		</ol>
+
+		<p class="sectionFooter">{xen:phrase showing_x_of_y_items, 'count=<span class="FilterListCount">{xen:count $categories}</span>', 'total={xen:count $categories}'}</p>
+
+	<xen:else />
+		<div class="noResults">{xen:phrase no_items_have_been_created_yet}</div>
+	</xen:if>
+</xen:form>]]></template>
+    <template title="xfa_tourn_option_template_del_thread_action"><![CDATA[<xen:controlunit label="{$preparedOption.title}" hint="{$preparedOption.hint}">
+	<xen:radio name="{$fieldPrefix}[{$preparedOption.option_id}][action]">
+		<xen:option label="{xen:phrase do_nothing}" value="" selected="{$preparedOption.option_value.action} == ''" />
+
+		<xen:option label="{xen:phrase delete_thread}" value="delete" selected="{$preparedOption.option_value.action} == 'delete'" />
+
+		<xen:option label="{xen:phrase xfa_tourn_close_thread}" value="close" selected="{$preparedOption.option_value.action} == 'close'" />
+	</xen:radio>
+	<p class="explain" style="margin-bottom: 12px">{xen:raw $preparedOption.explain}</p>
+	<xen:checkbox>
+		<xen:option name="{$fieldPrefix}[{$preparedOption.option_id}][update_title]" selected="{$preparedOption.option_value.update_title}" label="{xen:phrase xfa_tourn_update_thread_title_on_tournament_removal}:" hint="{xen:phrase xfa_tourn_use_title_tag_to_refer_to_thread_title}">
+			<xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][title_template]" value="{$preparedOption.option_value.title_template}" />
+		</xen:option>
+		<xen:option name="{$fieldPrefix}[{$preparedOption.option_id}][add_post]" selected="{$preparedOption.option_value.add_post}" label="{xen:phrase xfa_tourn_automatically_post_in_the_thread_upon_tournament_removal}" hint="{xen:phrase xfa_tourn_if_selected_post_made_automatically_on_creators_behalf_to_indicate_tournament_removed}" />
+	</xen:checkbox>
+	
+	<input type="hidden" name="{$listedFieldName}" value="{$preparedOption.option_id}" />
+	{xen:raw $editLink}
+</xen:controlunit>]]></template>
+  </admin_templates>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="XFA_Tournament_Proxy" callback_method="extendsControllerPublicThread" active="1" hint="XenForo_ControllerPublic_Thread" description="XenForo_ControllerPublic_Thread"/>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="XFA_Tournament_Proxy" callback_method="extendsControllerPublicAccount" active="1" hint="XenForo_ControllerPublic_Account" description="XenForo_ControllerPublic_Account"/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="XFA_Tournament_Proxy" callback_method="extendsDataWriterUser" active="1" hint="XenForo_DataWriter_User" description="XenForo_DataWriter_User"/>
+    <listener event_id="navigation_tabs" execute_order="10" callback_class="XFA_Tournament_Template" callback_method="navigationTabs" active="1" hint="" description="Add Tournaments to the navigation tabs"/>
+    <listener event_id="template_create" execute_order="10" callback_class="XFA_Tournament_Template" callback_method="template_create" active="1" hint="" description="Add permissions to view tournaments to global"/>
+  </code_event_listeners>
+  <cron>
+    <entry entry_id="xfa_tourn" cron_class="XFA_Tournament_CronEntry_Tournament" cron_method="automaticBracketGeneration" active="1"><![CDATA[{"day_type":"dom","dom":["-1"],"hours":["-1"],"minutes":["10"]}]]></entry>
+  </cron>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups>
+    <group group_id="xfa_tourn" display_order="10000" debug_only="0"/>
+    <option option_id="xfa_tourn_nbTopWinners" edit_format="spinbox" data_type="unsigned_integer" can_backup="1">
+      <default_value>10</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="xfa_tourn" display_order="2"/>
+    </option>
+    <option option_id="xfa_tourn_tournamentRemovalThreadAction" edit_format="template" data_type="array" can_backup="1">
+      <default_value>a:4:{s:6:"action";s:5:"close";s:12:"update_title";s:1:"1";s:14:"title_template";s:17:"{title} [Deleted]";s:8:"add_post";s:1:"1";}</default_value>
+      <edit_format_params>xfa_tourn_option_template_del_thread_action</edit_format_params>
+      <sub_options>action
+update_title
+title_template
+add_post</sub_options>
+      <relation group_id="xfa_tourn" display_order="3"/>
+    </option>
+    <option option_id="xfa_tourn_tournamentsPerPage" edit_format="spinbox" data_type="positive_integer" can_backup="1">
+      <default_value>20</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="xfa_tourn" display_order="1"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups>
+      <permission_group permission_group_id="xfa_tourn"/>
+    </permission_groups>
+    <permissions>
+      <permission permission_group_id="xfa_tourn" permission_id="canAddUser" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="4"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canCreate" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="2"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canCreatePrivate" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="3"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canDeleteByAnyone" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="16"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canDeleteBySelf" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="15"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canEditByAnyone" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="14"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canEditBySelf" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="13"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canGetNewAlert" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="100"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canInvite" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="4"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canRegister" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="1"/>
+      <permission permission_group_id="xfa_tourn" permission_id="canView" permission_type="flag" default_value="unset" interface_group_id="xfa_tourn" display_order="0"/>
+    </permissions>
+    <interface_groups>
+      <interface_group interface_group_id="xfa_tourn" display_order="10000"/>
+    </interface_groups>
+  </permissions>
+  <phrases>
+    <phrase title="admin_navigation_xfa_tourn" version_id="901000090" version_string="1.0.0"><![CDATA[Tournaments]]></phrase>
+    <phrase title="admin_navigation_xfa_tourn_categories" version_id="901000090" version_string="1.0.0"><![CDATA[Tournament Categories]]></phrase>
+    <phrase title="alert_xfa_tourn_scores_update_in_tournament_x" version_id="901010090" version_string="1.1.0"><![CDATA[Scores have been updated in tournament {title}]]></phrase>
+    <phrase title="cron_entry_xfa_tourn" version_id="901010090" version_string="1.1.0"><![CDATA[[XFA] Tournament Bracket Generation]]></phrase>
+    <phrase title="option_group_xfa_tourn" version_id="901000090" version_string="1.0.0"><![CDATA[[XFA] Tournament]]></phrase>
+    <phrase title="option_group_xfa_tourn_description" version_id="901000090" version_string="1.0.0"><![CDATA[Configuration of the Tournament add-on from XFA]]></phrase>
+    <phrase title="option_xfa_tourn_nbTopWinners" version_id="901010090" version_string="1.1.0"><![CDATA[Top Winners]]></phrase>
+    <phrase title="option_xfa_tourn_nbTopWinners_explain" version_id="901010090" version_string="1.1.0"><![CDATA[Number of top winners to display in the top winners block of the (set to 0 to disable]]></phrase>
+    <phrase title="option_xfa_tourn_tournamentRemovalThreadAction" version_id="902010090" version_string="2.1.0"><![CDATA[Tournament Removal Thread Action]]></phrase>
+    <phrase title="option_xfa_tourn_tournamentRemovalThreadAction_explain" version_id="902010090" version_string="2.1.0"><![CDATA[Define the action to perform on the automatically created thread when the corresponding tournament is deleted.]]></phrase>
+    <phrase title="option_xfa_tourn_tournamentsPerPage" version_id="901000090" version_string="1.0.0"><![CDATA[Tournaments Per Page]]></phrase>
+    <phrase title="option_xfa_tourn_tournamentsPerPage_explain" version_id="901000090" version_string="1.0.0"><![CDATA[Input the number of tournaments to display per page.]]></phrase>
+    <phrase title="permission_group_xfa_tourn" version_id="901000090" version_string="1.0.0"><![CDATA[[XFA] Tournament Permissions]]></phrase>
+    <phrase title="permission_interface_xfa_tourn" version_id="901000090" version_string="1.0.0"><![CDATA[[XFA] Tournament Permissions]]></phrase>
+    <phrase title="permission_xfa_tourn_canAddUser" version_id="902010090" version_string="2.1.0"><![CDATA[Can Add User]]></phrase>
+    <phrase title="permission_xfa_tourn_canCreate" version_id="901000090" version_string="1.0.0"><![CDATA[Create tournament]]></phrase>
+    <phrase title="permission_xfa_tourn_canCreatePrivate" version_id="901000090" version_string="1.0.0"><![CDATA[Can Create Private Tournament]]></phrase>
+    <phrase title="permission_xfa_tourn_canDeleteByAnyone" version_id="901000090" version_string="1.0.0"><![CDATA[Delete tournament by anyone]]></phrase>
+    <phrase title="permission_xfa_tourn_canDeleteBySelf" version_id="901000090" version_string="1.0.0"><![CDATA[Delete tournament by self]]></phrase>
+    <phrase title="permission_xfa_tourn_canEditByAnyone" version_id="901000090" version_string="1.0.0"><![CDATA[Edit tournament by anyone]]></phrase>
+    <phrase title="permission_xfa_tourn_canEditBySelf" version_id="901000090" version_string="1.0.0"><![CDATA[Edit tournament by self]]></phrase>
+    <phrase title="permission_xfa_tourn_canGetNewAlert" version_id="902020090" version_string="2.2.0"><![CDATA[Can get new tournament alert]]></phrase>
+    <phrase title="permission_xfa_tourn_canInvite" version_id="901000090" version_string="1.0.0"><![CDATA[Can Send Invite]]></phrase>
+    <phrase title="permission_xfa_tourn_canRegister" version_id="901000090" version_string="1.0.0"><![CDATA[Register to tournament]]></phrase>
+    <phrase title="permission_xfa_tourn_canView" version_id="901000090" version_string="1.0.0"><![CDATA[View tournaments]]></phrase>
+    <phrase title="xfa_count_noone_has_registered_yet" version_id="901000090" version_string="1.0.0"><![CDATA[Noone has registered yet]]></phrase>
+    <phrase title="xfa_knockout_final" version_id="901000090" version_string="1.0.0"><![CDATA[Final]]></phrase>
+    <phrase title="xfa_knockout_quarter_finals" version_id="901000090" version_string="1.0.0"><![CDATA[Quarter-finals]]></phrase>
+    <phrase title="xfa_knockout_round" version_id="901000090" version_string="1.0.0"><![CDATA[Round {round}]]></phrase>
+    <phrase title="xfa_knockout_round_of_16" version_id="901000090" version_string="1.0.0"><![CDATA[Round of 16]]></phrase>
+    <phrase title="xfa_knockout_semi_finals" version_id="901000090" version_string="1.0.0"><![CDATA[Semi-finals]]></phrase>
+    <phrase title="xfa_tipp_someone_creates_new_tournament" version_id="902020090" version_string="2.2.0"><![CDATA[Someone creates a new tournament]]></phrase>
+    <phrase title="xfa_tourn_add_tournament" version_id="901000090" version_string="1.0.0"><![CDATA[Add Tournament]]></phrase>
+    <phrase title="xfa_tourn_add_users" version_id="902010090" version_string="2.1.0"><![CDATA[Add Users]]></phrase>
+    <phrase title="xfa_tourn_automatically_created_thread_will_be_given_this_prefix" version_id="902010090" version_string="2.1.0"><![CDATA[Automatically created thread will be given this prefix.]]></phrase>
+    <phrase title="xfa_tourn_automatically_create_thread_in_forum" version_id="902010090" version_string="2.1.0"><![CDATA[Automatically create thread in forum]]></phrase>
+    <phrase title="xfa_tourn_automatically_post_in_the_thread_upon_tournament_removal" version_id="902010090" version_string="2.1.0"><![CDATA[Automatically post in the the thread upon tournament deletion]]></phrase>
+    <phrase title="xfa_tourn_automatic_bracket_generation" version_id="901000090" version_string="1.0.0"><![CDATA[Automatic bracket generation upon registration end]]></phrase>
+    <phrase title="xfa_tourn_categories" version_id="901000090" version_string="1.0.0"><![CDATA[Categories]]></phrase>
+    <phrase title="xfa_tourn_choose_category" version_id="901000090" version_string="1.0.0"><![CDATA[Choose Category]]></phrase>
+    <phrase title="xfa_tourn_cleaning_up_tournaments" version_id="901000090" version_string="1.0.0"><![CDATA[Cleaning up tournaments]]></phrase>
+    <phrase title="xfa_tourn_closed" version_id="901000090" version_string="1.0.0"><![CDATA[Closed]]></phrase>
+    <phrase title="xfa_tourn_close_thread" version_id="902010090" version_string="2.1.0"><![CDATA[Close Thread]]></phrase>
+    <phrase title="xfa_tourn_content" version_id="902010090" version_string="2.1.0"><![CDATA[Content]]></phrase>
+    <phrase title="xfa_tourn_converting_brackets" version_id="902000090" version_string="2.0.0"><![CDATA[Converting tournament brackets]]></phrase>
+    <phrase title="xfa_tourn_created_thread_explain" version_id="902010090" version_string="2.1.0"><![CDATA[If a forum is selected, a new thread will be posted when a new tournament is created.<br />
+This thread will be used to post updates about the tournament.]]></phrase>
+    <phrase title="xfa_tourn_creates_new_tournament" version_id="902020090" version_string="2.2.0"><![CDATA[Creates a new tournament]]></phrase>
+    <phrase title="xfa_tourn_currently_no_tournament_to_display" version_id="901000090" version_string="1.0.0"><![CDATA[There is currently no tournament to display]]></phrase>
+    <phrase title="xfa_tourn_delete_tournament" version_id="901000090" version_string="1.0.0"><![CDATA[Delete]]></phrase>
+    <phrase title="xfa_tourn_description" version_id="901000090" version_string="1.0.0"><![CDATA[Description]]></phrase>
+    <phrase title="xfa_tourn_discussion" version_id="902010090" version_string="2.1.0"><![CDATA[Discussion]]></phrase>
+    <phrase title="xfa_tourn_double_elimination" version_id="901010090" version_string="1.1.0"><![CDATA[Double elimination]]></phrase>
+    <phrase title="xfa_tourn_double_el_need_at_least_4_users" version_id="901010090" version_string="1.1.0"><![CDATA[At least 4 users are required for a double elimination tournament]]></phrase>
+    <phrase title="xfa_tourn_edit_tournament" version_id="901000090" version_string="1.0.0"><![CDATA[Edit Tournament]]></phrase>
+    <phrase title="xfa_tourn_end_registering" version_id="901000090" version_string="1.0.0"><![CDATA[End Registering]]></phrase>
+    <phrase title="xfa_tourn_generate_matches" version_id="901000090" version_string="1.0.0"><![CDATA[Generate Matches]]></phrase>
+    <phrase title="xfa_tourn_if_selected_post_made_automatically_on_creators_behalf_to_indicate_tournament_removed" version_id="902010090" version_string="2.1.0"><![CDATA[If selected, a post will be automatically made in the thread on behalf of the tournament author to indicate that it was removed.]]></phrase>
+    <phrase title="xfa_tourn_invite_users" version_id="901000090" version_string="1.0.0"><![CDATA[Invite Users]]></phrase>
+    <phrase title="xfa_tourn_latest_updates" version_id="901000090" version_string="1.0.0"><![CDATA[Latest Update]]></phrase>
+    <phrase title="xfa_tourn_losses_abbrev" version_id="901010090" version_string="1.1.0"><![CDATA[L]]></phrase>
+    <phrase title="xfa_tourn_manage_users" version_id="901000090" version_string="1.0.0"><![CDATA[Manage Users]]></phrase>
+    <phrase title="xfa_tourn_manual_selection" version_id="901000090" version_string="1.0.0"><![CDATA[Manual Selection]]></phrase>
+    <phrase title="xfa_tourn_max_participants" version_id="901000090" version_string="1.0.0"><![CDATA[Max. number of participants]]></phrase>
+    <phrase title="xfa_tourn_message_create_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[{username} created a new tournament:
+
+[url={documentLink}][plain]{title}[/plain][/url]
+[quote]{snippet}[/quote]
+
+[url={link}]View this tournament...[/url]]]></phrase>
+    <phrase title="xfa_tourn_message_delete_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[This tournament has been deleted and is no longer accessible.]]></phrase>
+    <phrase title="xfa_tourn_message_matches_started" version_id="902010090" version_string="2.1.0"><![CDATA[Matches have just started in the tournament:
+
+[url={documentLink}][plain]{title}[/plain][/url]
+
+[url={link}]View this tournament...[/url]]]></phrase>
+    <phrase title="xfa_tourn_message_matches_unvalidated" version_id="902010090" version_string="2.1.0"><![CDATA[Matches in the tournament have been unvalidated:
+
+[url={documentLink}][plain]{title}[/plain][/url]
+
+[url={link}]View this tournament...[/url]]]></phrase>
+    <phrase title="xfa_tourn_message_x_won_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[[url={userLink}]{username}[/url] won the tournament:
+
+[url={documentLink}][plain]{title}[/plain][/url]
+
+[url={link}]View this tournament...[/url]]]></phrase>
+    <phrase title="xfa_tourn_newest_tournaments" version_id="901000090" version_string="1.0.0"><![CDATA[Newest Tournament]]></phrase>
+    <phrase title="xfa_tourn_no_milestone" version_id="902010090" version_string="2.1.0"><![CDATA[No Milestone]]></phrase>
+    <phrase title="xfa_tourn_participants" version_id="901000090" version_string="1.0.0"><![CDATA[Participants]]></phrase>
+    <phrase title="xfa_tourn_player_x" version_id="901010090" version_string="1.1.0"><![CDATA[Player {player}]]></phrase>
+    <phrase title="xfa_tourn_play_third_place" version_id="901010090" version_string="1.1.0"><![CDATA[Play third place match (only for single/double elimination)]]></phrase>
+    <phrase title="xfa_tourn_points_abbrev" version_id="901010090" version_string="1.1.0"><![CDATA[P]]></phrase>
+    <phrase title="xfa_tourn_private_tournament" version_id="901000090" version_string="1.0.0"><![CDATA[Private Tournament]]></phrase>
+    <phrase title="xfa_tourn_provide_tournament_description" version_id="902010090" version_string="2.1.0"><![CDATA[Provide a description for this tournament to let the participant know of any clarification or information for this tournament.]]></phrase>
+    <phrase title="xfa_tourn_provide_tournament_rules" version_id="902010090" version_string="2.1.0"><![CDATA[Provide the rules that applies to this tournament to let the participant know of any particular rule.<br />
+Rules will be displayed in a dedicated tab.]]></phrase>
+    <phrase title="xfa_tourn_random_generation" version_id="901000090" version_string="1.0.0"><![CDATA[Random Generation]]></phrase>
+    <phrase title="xfa_tourn_registering_end" version_id="901000090" version_string="1.0.0"><![CDATA[Registering End (optional)]]></phrase>
+    <phrase title="xfa_tourn_register_now" version_id="901000090" version_string="1.0.0"><![CDATA[Register Now]]></phrase>
+    <phrase title="xfa_tourn_remaining_slots" version_id="901000090" version_string="1.0.0"><![CDATA[Remaining Slots]]></phrase>
+    <phrase title="xfa_tourn_remove_user" version_id="901000090" version_string="1.0.0"><![CDATA[Remove User ?]]></phrase>
+    <phrase title="xfa_tourn_requested_category_not_found" version_id="901000090" version_string="1.0.0"><![CDATA[Requested category not found]]></phrase>
+    <phrase title="xfa_tourn_requested_tournament_not_found" version_id="901000090" version_string="1.0.0"><![CDATA[Requested tournament not found]]></phrase>
+    <phrase title="xfa_tourn_requested_users_not_found" version_id="901000090" version_string="1.0.0"><![CDATA[Requested users couldn't be found]]></phrase>
+    <phrase title="xfa_tourn_round" version_id="901010090" version_string="1.1.0"><![CDATA[Round]]></phrase>
+    <phrase title="xfa_tourn_round_robin" version_id="901010090" version_string="1.1.0"><![CDATA[Round robin]]></phrase>
+    <phrase title="xfa_tourn_rules" version_id="902010090" version_string="2.1.0"><![CDATA[Rules]]></phrase>
+    <phrase title="xfa_tourn_save_scores" version_id="901010090" version_string="1.1.0"><![CDATA[Save Scores]]></phrase>
+    <phrase title="xfa_tourn_select_category_that_best_fits_your_tournament" version_id="901000090" version_string="1.0.0"><![CDATA[Select the category that best fits your tournament.]]></phrase>
+    <phrase title="xfa_tourn_set_result" version_id="901000090" version_string="1.0.0"><![CDATA[Set Result]]></phrase>
+    <phrase title="xfa_tourn_single_elimination" version_id="901010090" version_string="1.1.0"><![CDATA[Single elimination]]></phrase>
+    <phrase title="xfa_tourn_single_el_need_at_least_2_users" version_id="901010090" version_string="1.1.0"><![CDATA[At least 2 users are required for a single elimination tournament]]></phrase>
+    <phrase title="xfa_tourn_slots" version_id="901000090" version_string="1.0.0"><![CDATA[Slots]]></phrase>
+    <phrase title="xfa_tourn_someone_starts_tournament_you_participate" version_id="902020090" version_string="2.2.0"><![CDATA[Someone starts a tournament you registered to.]]></phrase>
+    <phrase title="xfa_tourn_someone_unvalidate_matches_tournament_you_participate" version_id="902020090" version_string="2.2.0"><![CDATA[Someone unvalidates the matches of a tournament you participate to]]></phrase>
+    <phrase title="xfa_tourn_someone_updates_scores_in_tournament_you_participate" version_id="902020090" version_string="2.2.0"><![CDATA[Someone update the scores of a tournament you participate to.]]></phrase>
+    <phrase title="xfa_tourn_ties_abbrev" version_id="901010090" version_string="1.1.0"><![CDATA[T]]></phrase>
+    <phrase title="xfa_tourn_top_winners" version_id="901010090" version_string="1.1.0"><![CDATA[Top winners]]></phrase>
+    <phrase title="xfa_tourn_tournaments" version_id="901000090" version_string="1.0.0"><![CDATA[Tournaments]]></phrase>
+    <phrase title="xfa_tourn_tournaments_won" version_id="901010090" version_string="1.1.0"><![CDATA[Tournaments Won]]></phrase>
+    <phrase title="xfa_tourn_tournament_categories" version_id="901000090" version_string="1.0.0"><![CDATA[Tournament Categories]]></phrase>
+    <phrase title="xfa_tourn_tournament_is_reset" version_id="902020090" version_string="2.2.0"><![CDATA[Reset a tournament]]></phrase>
+    <phrase title="xfa_tourn_tournament_options" version_id="901000090" version_string="1.0.0"><![CDATA[Tournament Options]]></phrase>
+    <phrase title="xfa_tourn_tournament_starts" version_id="902020090" version_string="2.2.0"><![CDATA[Starts a tournament]]></phrase>
+    <phrase title="xfa_tourn_tournament_tools" version_id="901000090" version_string="1.0.0"><![CDATA[Tournament Tools]]></phrase>
+    <phrase title="xfa_tourn_tournament_x_started" version_id="901000090" version_string="1.0.0"><![CDATA[Tournament {title} has just started]]></phrase>
+    <phrase title="xfa_tourn_tournament_x_unvalidated" version_id="902010090" version_string="2.1.0"><![CDATA[Tournament {title} has just been unvalidated]]></phrase>
+    <phrase title="xfa_tourn_type" version_id="901010090" version_string="1.1.0"><![CDATA[Type]]></phrase>
+    <phrase title="xfa_tourn_unregister" version_id="901000090" version_string="1.0.0"><![CDATA[Unregister]]></phrase>
+    <phrase title="xfa_tourn_unvalidate_matches" version_id="902010090" version_string="2.1.0"><![CDATA[Unvalidate Matches]]></phrase>
+    <phrase title="xfa_tourn_updated" version_id="901000090" version_string="1.0.0"><![CDATA[Updated]]></phrase>
+    <phrase title="xfa_tourn_updates_scores_tournament" version_id="902020090" version_string="2.2.0"><![CDATA[Updates scores of a tournament]]></phrase>
+    <phrase title="xfa_tourn_update_thread_title_on_tournament_removal" version_id="902010090" version_string="2.1.0"><![CDATA[Update the thread title upon tournament deletetion]]></phrase>
+    <phrase title="xfa_tourn_users_must_be_power_of_2" version_id="901010090" version_string="1.1.0"><![CDATA[Number of users must be a power of 2 for tournament]]></phrase>
+    <phrase title="xfa_tourn_use_title_tag_to_refer_to_thread_title" version_id="902010090" version_string="2.1.0"><![CDATA[Use the {title} tag to refer to the thread title.]]></phrase>
+    <phrase title="xfa_tourn_validate_matches" version_id="901010090" version_string="1.1.0"><![CDATA[Validate Matches]]></phrase>
+    <phrase title="xfa_tourn_view_tournaments_created" version_id="902010090" version_string="2.1.0"><![CDATA[My Tournaments]]></phrase>
+    <phrase title="xfa_tourn_view_tournaments_participated" version_id="902010090" version_string="2.1.0"><![CDATA[Participated Tournaments]]></phrase>
+    <phrase title="xfa_tourn_winner" version_id="901010090" version_string="1.1.0"><![CDATA[Winner]]></phrase>
+    <phrase title="xfa_tourn_wins" version_id="901010090" version_string="1.1.0"><![CDATA[Wins]]></phrase>
+    <phrase title="xfa_tourn_wins_abbrev" version_id="901010090" version_string="1.1.0"><![CDATA[W]]></phrase>
+    <phrase title="xfa_tourn_x_added_you_to_tournament_y" version_id="902010090" version_string="2.1.0"><![CDATA[{name} has added you to the tournament {title}]]></phrase>
+    <phrase title="xfa_tourn_x_created_new_tournament_y" version_id="902020090" version_string="2.2.0"><![CDATA[{name} has just created a new tournament {title}]]></phrase>
+    <phrase title="xfa_tourn_x_invited_you_to_join_tournament_y" version_id="901000090" version_string="1.0.0"><![CDATA[{name} invited you to join tournament {title}]]></phrase>
+    <phrase title="xfa_tourn_you_must_select_category" version_id="901000090" version_string="1.0.0"><![CDATA[You must select a category]]></phrase>
+  </phrases>
+  <route_prefixes>
+    <route_type type="admin">
+      <prefix original_prefix="tournament-categories" class="XFA_Tournament_Route_PrefixAdmin_Categories" build_link="data_only"/>
+    </route_type>
+    <route_type type="public">
+      <prefix original_prefix="tournaments" class="XFA_Tournament_Route_Prefix_Tournaments" build_link="data_only"/>
+    </route_type>
+  </route_prefixes>
+  <style_properties/>
+  <templates>
+    <template title="alert_xfa_tourn_added_to_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[{xen:phrase xfa_tourn_x_added_you_to_tournament_y,
+    'name={xen:helper username, $user, 'subject'}',
+    'title=<a href="{xen:link tournaments, $content}" class="PopupItemLink">{$content.title}</a>'}]]></template>
+    <template title="alert_xfa_tourn_invite" version_id="901000090" version_string="1.0.0"><![CDATA[{xen:phrase xfa_tourn_x_invited_you_to_join_tournament_y,
+    'name={xen:helper username, $user, 'subject'}',
+    'title=<a href="{xen:link tournaments, $content}" class="PopupItemLink">{$content.title}</a>'}]]></template>
+    <template title="alert_xfa_tourn_new" version_id="902020090" version_string="2.2.0"><![CDATA[{xen:phrase xfa_tourn_x_created_new_tournament_y,
+'name={xen:helper username, $user, 'subject'}',
+'title=<a href="{xen:link tournaments, $content}" class="PopupItemLink">{$content.title}</a>'}]]></template>
+    <template title="alert_xfa_tourn_scores_update" version_id="901010090" version_string="1.1.0"><![CDATA[{xen:phrase alert_xfa_tourn_scores_update_in_tournament_x,
+    'title=<a href="{xen:link tournaments, $content}" class="PopupItemLink">{$content.title}</a>'}]]></template>
+    <template title="alert_xfa_tourn_tournament_start" version_id="901000090" version_string="1.0.0"><![CDATA[{xen:phrase xfa_tourn_tournament_x_started,
+    'title=<a href="{xen:link tournaments, $content}" class="PopupItemLink">{$content.title}</a>'}]]></template>
+    <template title="alert_xfa_tourn_tournament_unvalidate" version_id="902010090" version_string="2.1.0"><![CDATA[{xen:phrase xfa_tourn_tournament_x_unvalidated,
+    'title=<a href="{xen:link tournaments, $content}" class="PopupItemLink">{$content.title}</a>'}]]></template>
+    <template title="xfa_tourn.css" version_id="902010090" version_string="2.1.0"><![CDATA[.tournamentListMain
+{
+	margin-left: 230px;
+}
+
+	.tournamentListMain .tabs
+	{
+		padding-left: 20px;
+		padding-right: 20px;
+		margin-bottom: 5px;
+	}
+
+.tournamentListSidebar
+{
+	float: left;
+	width: 220px;
+}
+
+.tournamentListSidebar .secondaryContent
+{
+	margin-bottom: 10px;
+}
+
+	.tournamentListSidebar h3
+	{
+		{xen:property sidebarBlockHeading}
+	}
+
+	.tournamentListSidebar .categoryList li
+	{
+		padding: 2px 0 3px;
+		overflow: hidden; zoom: 1;
+	}
+
+	.tournamentListSidebar .categoryList .count
+	{
+		color: {xen:property mutedTextColor};
+		float: right;
+		*float: none;
+		margin-left: 5px;
+	}
+
+	.tournamentListSidebar .categoryList .selected
+	{
+		font-weight: bold;
+	}
+
+	.tournamentListSidebar .categoryList ol ol
+	{
+		margin-left: 15px;
+	}
+
+.tournamentHeaders
+{
+	position: relative;
+	zoom: 1;
+}
+
+	.tournamentHeaders .extraLinks
+	{
+		position: absolute;
+		right: 10px;
+		top: 3px;
+		font-size: 11px;
+	}
+	
+.tournamentListItem
+{
+	display: table;
+	table-layout: fixed;
+	width: 100%;
+
+	{xen:property primaryContent.background}
+
+	{xen:property primaryContent.border}
+}
+
+	.tournamentListItem .listBlock
+	{
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	.tournamentListItem .listBlockInner
+	{
+		padding: 10px;
+	}
+
+	.tournamentListItem .tournamentImage
+	{
+		width: {xen:calc '48 + 3*2 + 5*2'}px;
+	}
+
+	.tournamentListItem .main
+	{
+		width: auto;
+	}
+
+		.tournamentListItem .main .title
+		{
+			font-size: 11pt;
+			font-weight: bold;
+		}
+
+		.tournamentListItem .main .extra
+		{
+			font-size: 11px;
+			float: right;
+			margin-left: 5px;
+		}
+
+		.tournamentListItem .main .tournamentDetails
+		{
+			font-size: 11px;
+		}
+
+		.tournamentListItem .main .tagLine
+		{
+			font-size: 11px;
+			margin-top: .5em;
+		}
+
+	.tournamentListItem .tournamentStats
+	{
+		width: 250px;
+		font-size: 11px;
+	}
+
+		.tournamentListItem .tournamentStats dt
+		{
+			color: {xen:property mutedTextColor};
+		}
+
+		.tournamentListItem .tournamentStats .Hint
+		{
+			float: right;
+		}
+
+	.tournamentListItem .tournamentImage,
+	.tournamentListItem .tournamentStats
+	{
+
+		background: {xen:property primaryLightest} url('{xen:property imagePath}/xenforo/gradients/category-23px-light.png') repeat-x top;
+
+	}
+
+/** IE <8 **/
+.tournamentListItem               { *display: block; _vertical-align: bottom; }
+.tournamentListItem .listBlock    { *display: block; *float: left; _height: 52px; *min-height: 52px; }
+.tournamentListItem .main         { *width: 59.98%; }
+.tournamentListItem .tournamentStats { *width: 28.97%; }
+
+<xen:if is="{xen:property enableResponsive}">
+@media (max-width:{xen:property maxResponsiveWideWidth})
+{
+	.Responsive .tournamentListBlock
+	{
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.Responsive .tournamentListBlock .tournamentListSidebar
+	{
+		display: table-footer-group;
+		
+		float: none;
+		padding-right: 0;
+		border-right: none;
+		margin: 0 auto;
+		margin-top: 10px;
+	}
+
+	.Responsive .tournamentListBlock .tournamentListMain 
+	{
+		display: table-header-group;
+
+		margin-left: 0;
+		border-left: none;
+		border-bottom: 1px solid {xen:property primaryLighter};
+		padding-bottom: 10px;
+	}
+
+	.Responsive .tournamentListBlock .tournamentListSidebar > *
+	{
+		max-width: 220px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
+	.Responsive .tournamentListMain
+	{
+		margin-left: 0px;
+	}
+}
+
+@media (max-width:{xen:property maxResponsiveMediumWidth})
+{
+	.Responsive .tournamentHeaders .extraLinks
+	{
+		position: static;
+		text-align: right;
+		margin-bottom: 3px;
+	}
+	
+	.Responsive .tournamentListMain
+	{
+		margin-left: 0px;
+	}
+}
+
+@media (max-width:{xen:property maxResponsiveNarrowWidth})
+{
+	.Responsive .tournamentListItem .listBlock.main,
+	.Responsive .tournamentListItem .listBlock.tournamentStats
+	{
+		display: block;
+	}
+	
+	.Responsive .tournamentListItem .listBlock.main .listBlockInner
+	{
+		padding-bottom: 0;
+	}
+	
+	.Responsive .tournamentListItem .listBlock.tournamentStats
+	{
+		width: auto;
+		background: transparent;
+	}
+	
+		.Responsive .tournamentListItem .listBlock.tournamentStats .listBlockInner
+		{
+			overflow: hidden;
+			padding-top: 3px;
+		}
+	
+	.Responsive .tournamentListMain
+	{
+		margin-left: 0px;
+	}
+}
+
+@media (max-width:340px)
+{
+	.Responsive .tournamentListBlock .tournamentListSidebar > *
+	{
+		max-width: none;
+	}
+	
+	.Responsive .tournamentListMain
+	{
+		margin-left: 0px;
+	}
+}
+</xen:if>
+
+/* generic sidebar blocks */
+		
+.tournamentListSidebar .section .primaryContent   h3,
+.tournamentListSidebar .section .secondaryContent h3,
+.profilePage .mast .section.infoBlock h3
+{
+	{xen:property sidebarBlockHeading}
+}
+
+.tournamentListSidebar .section .primaryContent   h3 a,
+.tournamentListSidebar .section .secondaryContent h3 a
+{
+	{xen:property sidebarBlockHeading.font}
+}
+
+.tournamentListSidebar .section .secondaryContent .footnote,
+.tournamentListSidebar .section .secondaryContent .minorHeading
+{
+	{xen:property sidebarBlockFootnote}
+}
+
+	.tournamentListSidebar .section .secondaryContent .minorHeading a
+	{
+		color: {xen:property sidebarBlockFootnote.color};
+	}
+
+/* list of users with 32px avatars, username and user title */
+
+.tournamentListSidebar .avatarList li
+{
+	{xen:property sidebarAvatarListItem}
+}
+
+	.tournamentListSidebar .avatarList .avatar
+	{
+		{xen:property sidebarAvatarListAvatar}
+		
+		width: auto;
+		height: auto;
+	}
+		
+	.tournamentListSidebar .avatarList .avatar img
+	{
+		width: {xen:property sidebarAvatarListAvatar.width};
+		height: {xen:property sidebarAvatarListAvatar.height};
+	}
+	
+	.tournamentListSidebar .avatarList .username
+	{
+		{xen:property sidebarAvatarListUsername}
+	}
+	
+	.tournamentListSidebar .avatarList .userTitle
+	{
+		{xen:property sidebarAvatarListUserTitle}
+	}
+
+.tournamentDescription
+{
+	margin: 5px 0px 15px 0px;
+	border: 1px solid {xen:property secondaryLight};
+	border-radius: 5px;	
+}
+	
+	.tournamentDescription .quoteContainer .quote
+	{
+		max-height: none;
+		font-style: italic;
+		font-size: 9pt;
+	}	
+	
+.tournamentListMain .Popup
+{
+	text-align: right;
+}]]></template>
+    <template title="xfa_tourn_account_alert_preferences" version_id="902020090" version_string="2.2.0"><![CDATA[<xen:if hascontent="true">
+<h3 class="sectionHeader">{xen:phrase xfa_tourn_tournaments}</h3>
+<dl class="ctrlUnit">
+	<dt>{xen:phrase receive_alert_when_someone}...</dt>
+	<dd>
+		<ul>
+    		<xen:contentcheck>
+    		<xen:if is="{$visitor.permissions.xfa_tourn.canGetNewAlert}">
+    			<li>
+    				<label><input type="checkbox" value="1" name="new_tournament_alert" {xen:checked "{$visitor.xfa_tourn_new_alert}"} /> {xen:phrase xfa_tourn_creates_new_tournament}</label
+    				 ><p class="hint">{xen:phrase xfa_tipp_someone_creates_new_tournament}</p>
+    			</li>    		
+    		</xen:if>
+    		<xen:if is="{$visitor.permissions.xfa_tourn.canRegister}">
+				<li><input type="hidden" name="alertSet[xfa_tourn_scores_update]" value="1" />
+					<label><input type="checkbox" value="1" name="alert[xfa_tourn_scores_update]" {xen:checked "!{$alertOptOuts.xfa_tourn_scores_update}"} /> {xen:phrase xfa_tourn_updates_scores_tournament}</label>
+					<p class="hint">{xen:phrase xfa_tourn_someone_updates_scores_in_tournament_you_participate}</p>
+				</li> 
+				<li><input type="hidden" name="alertSet[alert_xfa_tourn_tournament_start]" value="1" />
+					<label><input type="checkbox" value="1" name="alert[alert_xfa_tourn_tournament_start]" {xen:checked "!{$alertOptOuts.alert_xfa_tourn_tournament_start}"} /> {xen:phrase xfa_tourn_tournament_starts}</label>
+					<p class="hint">{xen:phrase xfa_tourn_someone_starts_tournament_you_participate}</p>
+				</li> 
+				<li><input type="hidden" name="alertSet[xfa_tourn_tournament_unvalidate]" value="1" />
+					<label><input type="checkbox" value="1" name="alert[xfa_tourn_tournament_unvalidate]" {xen:checked "!{$alertOptOuts.xfa_tourn_tournament_unvalidate}"} /> {xen:phrase xfa_tourn_tournament_is_reset}</label>
+					<p class="hint">{xen:phrase xfa_tourn_someone_unvalidate_matches_tournament_you_participate}</p>
+				</li> 
+    		</xen:if>
+    		</xen:contentcheck>
+		</ul>
+	</dd>
+</dl>
+</xen:if>]]></template>
+    <template title="xfa_tourn_add_users" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{$tournament.title}: {xen:phrase xfa_tourn_add_users}</xen:title>
+
+<xen:if is="{$tournament.tournament_id}">
+	<xen:navigation>
+		<xen:breadcrumb href="{xen:link full:tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+	</xen:navigation>
+</xen:if>
+
+
+<form action="{xen:link 'tournaments/add-users', $tournament}" method="post" class="section AutoValidator xenForm" 
+	data-redirect="on"
+>
+
+	<div class="primaryContent">
+    	<fieldset>
+        	<dl class="ctrlUnit">
+        		<dt>{xen:phrase user_name}:</dt>
+        		<dd>
+        			<input type="text" name="usernames" class="textCtrl AutoComplete" autofocus="autofocus" />
+        		</dd>
+        	</dl>   		
+    	</fieldset>
+    	
+    	<dl class="ctrlUnit submitUnit">
+    		<dt></dt>
+    		<dd>
+    			<input type="submit" value="{xen:phrase save}" accesskey="s" class="button primary" />
+    			<input type="button" value="{xen:phrase cancel}" class="button OverlayCloser" accesskey="r" />			
+    		</dd>
+    	</dl>    	
+	</div>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</form>]]></template>
+    <template title="xfa_tourn_bracket.css" version_id="901010090" version_string="1.1.0"><![CDATA[div.jQBracket {
+    position: relative;
+}
+div.jQBracket.lr {
+    margin-left: auto;
+    margin-right: auto;
+}
+div.jQBracket .tools {
+    position: absolute;
+    top: 0;
+    color: #FFF;
+}
+div.jQBracket .tools span {
+    cursor: pointer;
+    margin: 5px;
+    display: block;
+    text-align: center;
+    width: 18px;
+    height: 18px;
+    background-color: #666;
+}
+div.jQBracket .tools span:hover {
+    background-color: #999;
+}
+div.jQBracket .finals {
+    float: right;
+    right: 0;
+    clear: right;
+    position: relative;
+}
+div.jQBracket .bracket {
+    float: right;
+    clear: left;
+}
+div.jQBracket .loserBracket {
+    float: right;
+    clear: left;
+    position: relative;
+}
+div.jQBracket .round {
+    position: relative;
+    width: 100px;
+    margin-right: 40px;
+    float: left;
+}
+div.jQBracket .match {
+    position: relative;
+}
+div.jQBracket .editable {
+    cursor: pointer;
+}
+div.jQBracket .team {
+    position: relative;
+    z-index: 1;
+    float: left;
+    background-color: #EEE;
+    width: 100px;
+    cursor: default;
+}
+div.jQBracket .team:first-child {
+    border-bottom: 1px solid #999;
+}
+div.jQBracket .team input {
+    font-size: 12px;
+    padding: 0;
+    width: inherit;
+    border: 0;
+    margin: 0;
+}
+div.jQBracket .team div.label {
+    padding: 3px;
+    position: absolute;
+    width: 70px;
+    height: 22px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+div.jQBracket .team div.label[disabled] {
+    cursor: default;
+}
+div.jQBracket .team div.score {
+    float: right;
+    padding: 3px;
+    background-color: rgba(255, 255, 255, .3);
+    text-align: center;
+    width: 20px;
+}
+div.jQBracket .team div.score[disabled] {
+    color: #999;
+    cursor: default;
+}
+div.jQBracket .team div.label input.error, div.jQBracket .team div.score input.error {
+    background-color: #FCC;
+}
+div.jQBracket .team.np {
+    background-color: #666;
+    color: #EEE;
+}
+div.jQBracket .team.na {
+    background-color: #999;
+    color: #CCC;
+}
+div.jQBracket .team.win {
+    color: #333;
+}
+div.jQBracket .team.win div.score {
+    color: #060;
+}
+div.jQBracket .team.lose div.score {
+    color: #900;
+}
+div.jQBracket .team.lose {
+    background-color: #DDD;
+    color: #999;
+}
+div.jQBracket .team.tie div.score {
+    color: #00F;
+}
+div.jQBracket .team.highlightWinner {
+    background-color: #DA0;
+    color: #000;
+}
+div.jQBracket .team.highlightLoser {
+    background-color: #CCC;
+    color: #000;
+}
+div.jQBracket .team.highlight {
+    background-color: #3C0;
+    color: #000;
+}
+div.jQBracket .teamContainer {
+    z-index: 1;
+    position: relative;
+    float: left;
+}
+div.jQBracket .connector {
+    border: 2px solid #666;
+    border-left-style: none;
+    position: absolute;
+    z-index: 1;
+}
+div.jQBracket .connector div.connector {
+    border: 0;
+    border-bottom: 2px solid #666;
+    height: 0;
+    position: absolute;
+}
+div.jQBracket .connector.highlightWinner, div.jQBracket .connector div.connector.highlightWinner {
+    border-color: #DA0;
+}
+div.jQBracket .connector.highlightLoser, div.jQBracket .connector div.connector.highlightLoser {
+    border-color: #CCC;
+}
+div.jQBracket .connector.highlight, div.jQBracket .connector div.connector.highlight {
+    border-color: #0C0;
+}
+div.jQBracket .np .connector, div.jQBracket .np .connector div.connector {
+    border-color: #222;
+}
+div.jQBracket .bubble {
+    height: 22px;
+    line-height: 22px;
+    width: 30px;
+    right: -35px;
+    position: absolute;
+    text-align: center;
+    font-size: 11px;
+}
+div.jQBracket .bubble.third {
+    background-color: #963;
+    color: #D95;
+}
+div.jQBracket .bubble.fourth {
+    background-color: #678;
+    color: #CCD;
+}
+div.jQBracket .bubble:after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+div.jQBracket .bubble:after {
+    left: -5px;
+    border-left: 0;
+}
+div.jQBracket .bubble.third:after {
+    border-right: 6px solid #963;
+}
+div.jQBracket .bubble.fourth:after {
+    border-right: 6px solid #678;
+}
+div.jQBracket .highlightWinner .bubble {
+    background-color: #DA0;
+    color: #960;
+}
+div.jQBracket .highlightWinner .bubble:after {
+    border-right-color: #DA0;
+}
+div.jQBracket .highlightLoser .bubble {
+    background-color: #CCC;
+    color: #333;
+}
+div.jQBracket .highlightLoser .bubble:after {
+    border-right-color: #CCC;
+}
+div.jQBracket.rl .finals {
+    float: left;
+    left: 0;
+    clear: left;
+}
+div.jQBracket.rl .bracket {
+    float: left;
+    clear: right;
+}
+div.jQBracket.rl .loserBracket {
+    float: left;
+    clear: right;
+}
+div.jQBracket.rl .round {
+    margin-right: 0;
+    margin-left: 40px;
+    float: right;
+}
+div.jQBracket.rl .team {
+    float: right;
+}
+div.jQBracket.rl .team div.label {
+    right: 0;
+}
+div.jQBracket.rl .team div.score {
+    float: left;
+}
+div.jQBracket.rl .teamContainer {
+    float: right;
+}
+div.jQBracket.rl .connector {
+    border-left-style: solid;
+    border-right-style: none;
+    border-width: 2px;
+}
+div.jQBracket.rl .connector.highlightWinner, div.jQBracket.rl .connector div.connector.highlightWinner {
+    border-color: #DA0;
+}
+div.jQBracket.rl .connector.highlightLoser, div.jQBracket.rl .connector div.connector.highlightLoser {
+    border-color: #CCC;
+}
+div.jQBracket.rl .connector.highlight, div.jQBracket.rl .connector div.connector.highlight {
+    border-color: #0C0;
+}
+div.jQBracket.rl .bubble {
+    left: -35px;
+}
+div.jQBracket.rl .bubble.third {
+    background-color: #963;
+    color: #310;
+}
+div.jQBracket.rl .bubble.fourth {
+    background-color: #678;
+    color: #CCD;
+}
+div.jQBracket.rl .bubble:after {
+    left: auto;
+    right: -5px;
+    border-left: 5px solid transparent;
+    border-right: 0;
+}
+div.jQBracket.rl .bubble.third:after {
+    border-right: 0;
+    border-left: 6px solid #963;
+}
+div.jQBracket.rl .bubble.fourth:after {
+    border-right: 0;
+    border-left: 6px solid #678;
+}
+div.jQBracket.rl .highlightWinner .bubble:after {
+    border-left-color: #DA0;
+}
+div.jQBracket.rl .highlightLoser .bubble:after {
+    border-left-color: #CCC;
+}]]></template>
+    <template title="xfa_tourn_category" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{xen:phrase xfa_tourn_tournaments}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link tournaments/categories, $category}">{$category.category_title}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:container var="$head.canonical">
+	<link rel="canonical" href="{xen:link 'canonical:tournaments'}" /></xen:container>
+
+<xen:if is="{$canAddTournament}">
+	<xen:topctrl><a href="{xen:link tournaments/add, '', 'tournament_category_id={$category.tournament_category_id}'}" class="callToAction OverlayTrigger"><span>{xen:phrase xfa_tourn_add_tournament}</span></a></xen:topctrl>
+</xen:if>
+
+<xen:require css="sidebar.css" />
+<xen:require css="xfa_tourn.css" />
+
+<div class="tournamentListBlock">
+    <div class="tournamentListSidebar">
+    	<div class="secondaryContent categoryList">
+        	<h3>{xen:phrase xfa_tourn_categories}</h3>
+        	<div class="pairsJustified">
+                <ol>
+                <xen:foreach loop="$categories" value="$_category">
+    				<li class="{xen:if '{$_category.tournament_category_id} == {$selectedCategoryId}', selected}">               
+                        <a href="{xen:link tournaments/categories, $_category}">{$_category.category_title}</a>
+    				</li>
+                </xen:foreach>
+                </ol>
+        	</div>      	
+    	</div>
+    	
+    	<xen:if is="{$topWinners}">
+		<div class="secondaryContent avatarList">
+        	<h3>{xen:phrase xfa_tourn_top_winners}</h3>
+			<ol>
+			<xen:foreach loop="$topWinners" value="$user">
+				<li>
+					<xen:avatar user="$user" size="s" img="true" class="NoOverlay" />
+					<xen:username user="$user" rich="true" class="NoOverlay" />
+					<div class="extraData">{xen:phrase xfa_tourn_wins}: {xen:number $user.xfa_tourn_wins}</a></div>
+				</li>
+			</xen:foreach>
+			</ol>
+		</div>    
+    	</xen:if>    	    	
+	</div>
+</div>
+
+<div class="tournamentListMain">
+
+	<div class="section">
+
+        <xen:include template="xfa_tourn_tournament_filter">
+        	<xen:set var="$linkBase" value="tournaments/categories" />
+        	<xen:set var="$linkData" value="{$category}" />
+        </xen:include>
+    	
+    	<ol class="tournamentList">
+    	<xen:if is="{$tournaments}">
+            <xen:foreach loop="$tournaments" value="$tournament">
+			    <xen:include template="xfa_tourn_tournament_list_item">
+				    <xen:set var="$showCategoryTitle">1</xen:set>
+                </xen:include>
+            </xen:foreach>
+    	<xen:else />
+    		<li class="primaryContent">{xen:phrase xfa_tourn_currently_no_tournament_to_display}</li>
+    	</xen:if>
+    	</ol>
+    	
+    	<div class="pageNavLinkGroup">
+    		<xen:pagenav link="tournaments/categories" linkdata="{$category}" linkparams="{$pageNavParams}" page="{$page}" perpage="{$perPage}" total="{$totalTournaments}" />
+    	</div>
+    	
+	</div>
+	
+</div>]]></template>
+    <template title="xfa_tourn_champion.css" version_id="901010090" version_string="1.1.0"><![CDATA[/* jQuery Group | Copyright (c) Teijo Laine 2013 | Licenced under the MIT licence */
+.jqgroup.read-write {
+    cursor: default;
+}
+.jqgroup.read-write .match {
+    cursor: move;
+}
+.jqgroup.read-write .match:hover {
+    background-color: #ccc;
+}
+.jqgroup.read-write .rounds .round {
+    padding-bottom: 10px;
+}
+.jqgroup.read-write .rounds .round:first-child {
+    background-color: #f99;
+}
+.jqgroup.read-write .rounds .round:first-child .match {
+    background-color: #fcc;
+}
+.jqgroup.read-write .rounds .round:first-child .match .team {
+    border-color: #faa;
+}
+.jqgroup.read-write .standings table td:first-child:hover:before {
+    color: #333;
+    font-size: 1em;
+    content: "\0270E";
+    position: absolute;
+    left: -1em;
+}
+.jqgroup.read-write .rounds input[type=text].score:focus, .jqgroup.read-write .standings input[type=text]:focus {
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #000;
+    color: #000;
+}
+.jqgroup.read-write .rounds input[type=text].score.conflict, .jqgroup.read-write .rounds input[type=text].score.add.conflict, .jqgroup.read-write .standings input[type=text].conflict, .jqgroup.read-write .standings input[type=text].add.conflict {
+    background-color: #900;
+    color: #fee;
+}
+.jqgroup {
+    width: 100%;
+    display: inline-block;
+    box-sizing: border-box;
+}
+.jqgroup input {
+    box-sizing: border-box;
+    height: 22px;
+}
+.jqgroup .standings {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+}
+.jqgroup .standings table {
+    border-spacing: 0;
+    width: 100%;
+    line-height: 22px;}
+.jqgroup .standings table td {
+    text-align: left;
+    {xen:property secondaryContent}  
+    padding: 3px;      
+}
+.jqgroup .standings table th {
+    padding: 3px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+    {xen:property secondaryContentLink}
+    {xen:property secondaryContent}  
+    padding: 3px;    
+}
+.jqgroup .standings table td:nth-child(2) {
+    font-weight: bold;
+}
+.jqgroup .standings table td:nth-child(6) {
+    cursor: help;
+}
+.jqgroup .standings table td:nth-child(6):hover {
+    background-color: rgba(255, 255, 255, .6);
+}
+.jqgroup .standings table td:first-child {
+    position: relative;
+}
+.jqgroup .standings input[type=submit] {
+    width: 100%}
+.jqgroup .standings input[type=text] {
+    margin: 0;
+    padding: 3px;
+    border: 0;
+    width: 100%;
+    background-color: transparent;
+}
+.jqgroup .standings input[type=text].add {
+    border: 1px solid #000;
+}
+.jqgroup .standings td:not(:first-child) {
+    text-align: center;
+}
+.jqgroup .standings th:first-child {
+    text-align: left;
+}
+.jqgroup .standings td {
+    border-bottom: 1px solid #ddd;
+}
+.jqgroup .standings .drop {
+    cursor: pointer;
+    background-color: #fee;
+    visibility: hidden;
+}
+.jqgroup .standings .drop:hover {
+    background-color: red;
+}
+.jqgroup .rounds {
+    margin-top: 15px;
+    //background-color: #ddd;
+    //border-top: 1px solid #999;
+    float: left;
+    width: 100%}
+.jqgroup .roundsHeader {
+    cursor: pointer;
+}
+.jqgroup .roundsHeader:hover {
+    text-decoration: underline;
+}
+.jqgroup .unassigned {
+    background-color: #aaa;
+}
+.jqgroup .participant {
+    background-color: #eee;
+}
+.jqgroup .match {
+    background-color: #ddd;
+    min-width: 50px;
+    float: left;
+    clear: both;
+    width: 100%}
+.jqgroup .match:nth-child(n+3) div.team {
+    border-top: 1px solid #ccc;
+}
+.jqgroup .match:nth-child(n+3) div.team.highlight {
+    border-color: #0b0;
+}
+.jqgroup .match div.team {
+    float: left;
+    width: 50%}
+.jqgroup .match .score, .jqgroup .match div.label {
+    box-sizing: border-box;
+    padding: 3px;
+    float: left;
+    text-align: center;
+}
+.jqgroup .match .score {
+    font-size: 14px;
+    height: 22px;
+    width: 20%;
+    border: 0;
+    text-align: center;
+    background-color: rgba(255, 255, 255, .3);
+}
+.jqgroup .match .score.win {
+    color: #060;
+}
+.jqgroup .match .score.lose {
+    color: #900;
+}
+.jqgroup .match div.label {
+    height: 22px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 80%}
+.jqgroup .round {
+    width: 100%;
+    float: left;
+    clear: both;
+}
+.jqgroup .round:nth-child(n+3) {
+    margin-top: 10px;
+}
+.jqgroup .round.droppable {
+    background-color: #8c8;
+}
+.jqgroup .round.droppable .match {
+    opacity: .7;
+}
+.jqgroup .round.droppable.over {
+    background-color: #8f8;
+}
+.jqgroup [data-roundid="0"] {
+    display: none;
+}
+.jqgroup header {
+    padding: 0 2px;
+    font-size: 15px;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+}
+.jqgroup .highlight {
+    background-color: #3c0;
+}]]></template>
+    <template title="xfa_tourn_delete_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{xen:phrase xfa_tourn_delete_tournament} - {$tournament.title}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link tournaments/categories, $category}">{$category.category_title}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:link tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+</xen:navigation>
+
+<form action="{xen:link 'tournaments/delete', $tournament}" method="post" class="xenForm formOverlay">
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd>
+			<input type="submit" value="{xen:phrase xfa_tourn_delete_tournament}" class="button primary" />
+		</dd>
+	</dl>
+
+	<input type="hidden" name="_xfConfirm" value="1" />
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="redirect" value="{$redirect}" />
+</form>]]></template>
+    <template title="xfa_tourn_generate_bracket" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{xen:phrase xfa_tourn_generate_matches} - {$tournament.title}</xen:title>
+
+<xen:navigation>
+    <xen:breadcrumb href="{xen:link tournaments/categories, $category}">{$category.category_title}</xen:breadcrumb>
+    <xen:breadcrumb href="{xen:link tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:require css="xfa_tourn.css" />
+
+
+<xen:if is="{$tournament.type} == 'round_robin'">
+    <xen:require css="xfa_tourn_champion.css" />
+    <xen:require js="js/xfa/third_party/handlebars/handlebars.1.0.0.js" />
+    <xen:require js="js/xfa/third_party/lodash/lodash-2.2.1.min.js" />
+    <xen:require js="js/xfa/third_party/bacon/Bacon-1ab32ffb.min.js" />
+    <xen:require js="js/xfa/third_party/jquery-group/jquery.group.min.js" />    
+<xen:else />
+    <xen:require css="xfa_tourn_bracket.css" />
+    <xen:require js="js/xfa/third_party/jquery-bracket/0.7.2/jquery.bracket.min.js" />
+    <xen:require js="js/xfa/tournament/generateMatches.min.js" />
+</xen:if>
+
+
+<form id="generateMatchesForm" action="{xen:link 'tournaments/generate-matches', $tournament}" method="post" class="xenForm">
+
+    <xen:if is="{$tournament.type} == 'round_robin'">
+        <div id="tournamentChamp"></div>
+        
+        <script type="text/javascript">
+        var champData = {xen:raw $bracketData};
+        var resultData= JSON.stringify({xen:raw $bracketData}); 
+            
+        jQuery.extend(XenForo.phrases,
+        {
+            xfa_tourn_round: "{xen:phrase xfa_tourn_round}",
+            xfa_tourn_points_abbrev: "{xen:phrase xfa_tourn_points_abbrev}",
+            xfa_tourn_wins_abbrev: "{xen:phrase xfa_tourn_wins_abbrev}",
+            xfa_tourn_ties_abbrev: "{xen:phrase xfa_tourn_ties_abbrev}",
+            xfa_tourn_losses_abbrev: "{xen:phrase xfa_tourn_losses_abbrev}"
+        });     
+        
+        $( document ).ready(function() {
+            $('#tournamentChamp').group({
+                init: champData,
+                save: function(state) { resultData = JSON.stringify(state); }
+            });
+            
+            $('#generateMatchesForm').submit(function() {
+                var $hidden = $("<input type='hidden' name='bracketData'/>");
+                $hidden.val(resultData);
+                $(this).append($hidden);
+                return true;
+            });
+        });        
+        </script>
+    <xen:else />
+        <div class="tournamentBracket" style="overflow: auto;" data-third-place="{xen:if '{$tournament.third_place}', true, false}"></div>
+    
+        <script type="text/javascript">       
+            var bracketData = {
+                teams: [
+                    <xen:foreach loop="$teams" value="$team" i="$i">
+                    [
+                        {name: '{$team.0.username}', id: '{$team.0.participant_id}', idx1: {$i}, idx2: 0},
+                        {name: '{$team.1.username}', id: '{$team.1.participant_id}', idx1: {$i}, idx2: 1}
+                    ],
+                    </xen:foreach>
+                ],
+                results:
+                    <xen:if is="{$tournament.type} == 'double_el'">
+                        [[[[]]], [], []]
+                    <xen:else />
+                        [[]]
+                    </xen:if>
+            }        
+            
+            XFATourn_load(bracketData);
+        </script>
+    </xen:if>
+
+
+    <dl class="ctrlUnit submitUnit">
+        <dt></dt>
+        <dd>
+            <button name="type" type="submit" class="button primary">{xen:phrase xfa_tourn_validate_matches}</button>
+        </dd>
+    </dl>
+
+    <input type="hidden" name="_xfConfirm" value="1" />
+    <input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+    <input type="hidden" name="redirect" value="{$redirect}" />
+</form>]]></template>
+    <template title="xfa_tourn_invite_users" version_id="901000090" version_string="1.0.0"><![CDATA[<xen:title>{$tournament.title}: {xen:phrase xfa_tourn_invite_users}</xen:title>
+
+<xen:if is="{$tournament.tournament_id}">
+	<xen:navigation>
+		<xen:breadcrumb href="{xen:link full:tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+	</xen:navigation>
+</xen:if>
+
+
+<form action="{xen:link 'tournaments/invite-users', $tournament}" method="post" class="section AutoValidator xenForm" 
+	data-redirect="on"
+>
+
+	<div class="primaryContent">
+    	<fieldset>
+        	<dl class="ctrlUnit">
+        		<dt>{xen:phrase user_name}:</dt>
+        		<dd>
+        			<input type="text" name="usernames" class="textCtrl AutoComplete" autofocus="autofocus" />
+        		</dd>
+        	</dl>   		
+    	</fieldset>
+    	
+    	<dl class="ctrlUnit submitUnit">
+    		<dt></dt>
+    		<dd>
+    			<input type="submit" value="{xen:phrase save}" accesskey="s" class="button primary" />
+    			<input type="button" value="{xen:phrase cancel}" class="button OverlayCloser" accesskey="r" />			
+    		</dd>
+    	</dl>    	
+	</div>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</form>]]></template>
+    <template title="xfa_tourn_manage_users" version_id="901000090" version_string="1.0.0"><![CDATA[<xen:title>{$tournament.title}: {xen:phrase xfa_tourn_manage_users}</xen:title>
+
+<xen:if is="{$tournament.tournament_id}">
+	<xen:navigation>
+		<xen:breadcrumb href="{xen:link full:tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+	</xen:navigation>
+</xen:if>
+
+
+<form action="{xen:link 'tournaments/manage-users', $tournament}" method="post" class="section AutoValidator xenForm" 
+	data-redirect="on"
+>
+
+	<div class="primaryContent">
+    	<fieldset>
+    		<dl class="ctrlUnit titleUnit">
+    			<dt></dt>
+    			<dd style="text-align: center;">
+    				{xen:phrase xfa_tourn_remove_user}
+    			</dd>
+    		</dl>
+
+    	    <xen:foreach loop="$participants" value="$participant">
+        		<dl class="ctrlUnit titleUnit">
+        			<dt><xen:username user="{$participant}" /></dt>
+                    <dd style="text-align: center;">
+        				<input type="checkbox" name="kick[]" value="{$participant.participant_id}" />
+        			</dd>
+        		</dl>
+    	    </xen:foreach>
+    		    		
+    	</fieldset>
+    	
+    	<dl class="ctrlUnit submitUnit">
+    		<dt></dt>
+    		<dd>
+    			<input type="submit" value="{xen:phrase save}" accesskey="s" class="button primary" />
+    			<input type="button" value="{xen:phrase cancel}" class="button OverlayCloser" accesskey="r" />			
+    		</dd>
+    	</dl>    	
+	</div>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</form>]]></template>
+    <template title="xfa_tourn_manual_select_bracket" version_id="901000090" version_string="1.0.0"><![CDATA[<xen:title>{$tournament.title}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link tournaments}">{xen:phrase xfa_tourn_tournaments}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:link tournaments/categories, $category}">{$category.category_title}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:link tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:container var="$head.canonical">
+	<link rel="canonical" href="{xen:link 'canonical:tournaments'}" /></xen:container>
+
+<xen:require css="xfa_tourn.css" />
+<xen:require css="xfa_tourn_bracket.css" />
+
+<form action="{xen:link 'tournaments/manual-bracket', $tournament}" method="post" class="section AutoValidator xenForm" 
+	data-redirect="on"
+>
+
+    <section id="bracket">
+        <div class="container">
+            <!-- Left part -->
+            <div class="split split-one">
+            <xen:if is="{$rounds} > 2">
+                <xen:foreach loop="$bracket" key="$key" value="$round">
+                    <xen:if is="{$roundsInfo.{$key}.1} > 4">
+                        <div class="round round-{$key}-{$roundsInfo.{$key}.1}">
+                            <div class="round-details">{$roundsInfo.{$key}.0}</div>
+                            <xen:foreach loop="$round" key="$matchIndex" value="$match">
+                                <xen:if is="{$matchIndex} % 2 == 0">
+                                <ul class="matchup">
+                                    <li class="team team-top">
+                                        <xen:if is="{$match.c1}">
+                                        <select name="bracket[{$key}][{$matchIndex}][c1]">
+                                            <xen:foreach loop="$participants" value="$participant">
+                                                <option value="{$participant}" {xen:selected '{$match.c1} == {$participant}'}>{$participant}</option>
+                                            </xen:foreach>
+                                        </select>
+                                        </xen:if>
+                                    </li>
+                                    <li class="team team-bottom">
+                                        <xen:if is="{$match.c2}">
+                                        <select name="bracket[{$key}][{$matchIndex}][c2]">
+                                            <xen:foreach loop="$participants" value="$participant">
+                                                <option value="{$participant}" {xen:selected '{$match.c2} == {$participant}'}>{$participant}</option>
+                                            </xen:foreach>
+                                        </select>
+                                        </xen:if>
+                                    </li>
+                                </ul>   
+                                </xen:if>
+                            </xen:foreach>                            
+                        </div>
+                    </xen:if>
+                </xen:foreach>
+            </xen:if>
+            </div>
+            <!-- Middle part -->
+            <div class="champion">
+            <xen:if is="{$rounds} > 1">
+                <xen:foreach loop="$bracket" key="$key" value="$round">
+                    <xen:if is="{$roundsInfo.{$key}.1} == 4">
+                        <div class="semis-l">
+                            <div class="round-details">Semifinal</div>
+                            <ul class="matchup championship">
+                                <li class="team team-top">
+                                    <xen:if is="{$round.0.c1}">
+                                    <select name="bracket[{$key}][0][c1]">
+                                        <xen:foreach loop="$participants" value="$participant">
+                                            <option value="{$participant}" {xen:selected '{$round.0.c1} == {$participant}'}>{$participant}</option>
+                                        </xen:foreach>
+                                    </select>
+                                    </xen:if>
+                                </li>
+                                <li class="team team-bottom">
+                                    <xen:if is="{$round.0.c2}">
+                                    <select name="bracket[{$key}][0][c2]">
+                                        <xen:foreach loop="$participants" value="$participant">
+                                            <option value="{$participant}" {xen:selected '{$round.0.c2} == {$participant}'}>{$participant}</option>
+                                        </xen:foreach>
+                                    </select>
+                                    </xen:if>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="final">
+                            <i class="fa fa-trophy"></i>
+                            <div class="round-details">Final</div>
+                            <ul class="matchup championship">
+                                <xen:set var="$index">{xen:calc '{$key} + 1'}</xen:set>
+                                <li class="team team-top">
+                                    <xen:if is="{$bracket.{$index}.0.c1}">
+                                    <select name="bracket[{$index}][0][c1]">
+                                        <xen:foreach loop="$participants" value="$participant">
+                                            <option value="{$participant}" {xen:selected '{$bracket.{$index}.0.c1} == {$participant}'}>{$participant}</option>
+                                        </xen:foreach>
+                                    </select>
+                                    </xen:if>
+                                </li>
+                                <li class="team team-bottom">
+                                    <xen:if is="{$bracket.{$index}.0.c2}">
+                                    <select name="bracket[{$index}][0][c2]">
+                                        <xen:foreach loop="$participants" value="$participant">
+                                            <option value="{$participant}" {xen:selected '{$bracket.{$index}.0.c2} == {$participant}'}>{$participant}</option>
+                                        </xen:foreach>
+                                    </select>
+                                    </xen:if>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="semis-r">
+                            <div class="round-details">Semifinal</div>
+                            <ul class="matchup championship">
+                                <li class="team team-top">
+                                    <xen:if is="{$round.1.c1}">
+                                    <select name="bracket[{$key}][1][c1]">
+                                        <xen:foreach loop="$participants" value="$participant">
+                                            <option value="{$participant}" {xen:selected '{$round.1.c1} == {$participant}'}>{$participant}</option>
+                                        </xen:foreach>
+                                    </select>
+                                    </xen:if>
+                                </li>
+                                <li class="team team-bottom">
+                                    <xen:if is="{$round.1.c2}">
+                                    <select name="bracket[{$key}][1][c2]">
+                                        <xen:foreach loop="$participants" value="$participant">
+                                            <option value="{$participant}" {xen:selected '{$round.1.c2} == {$participant}'}>{$participant}</option>
+                                        </xen:foreach>
+                                    </select>
+                                    </xen:if>
+                                </li>
+                            </ul>
+                        </div>
+                    </xen:if>
+                </xen:foreach>
+            <xen:else />
+                <div class="final">
+                    <i class="fa fa-trophy"></i>
+                    <div class="round-details">Final</div>
+                    <ul class="matchup championship">
+                        <li class="team team-top">
+                            <xen:if is="{$bracket.1.0.c1}">
+                            <select name="bracket[1][c1]">
+                                <xen:foreach loop="$participants" value="$participant">
+                                    <option value="{$participant}" {xen:selected '{$bracket.1.0.c1} == {$participant}'}>{$participant}</option>
+                                </xen:foreach>
+                            </select>
+                            </xen:if>
+                        </li>
+                        <li class="team team-bottom">
+                            <xen:if is="{$bracket.1.0.c2}">
+                            <select name="bracket[1][c2]">
+                                <xen:foreach loop="$participants" value="$participant">
+                                    <option value="{$participant}" {xen:selected '{$bracket.1.0.c2} == {$participant}'}>{$participant}</option>
+                                </xen:foreach>
+                            </select>
+                            </xen:if>
+                        </li>
+                    </ul>
+                </div>
+            </xen:if>
+            </div>
+            <!-- Right part -->
+            <div class="split split-two">
+            <xen:if is="{$rounds} > 2">
+                <xen:foreach loop="$bracketReversed" key="$key" value="$round">
+                    <xen:if is="{$roundsInfo.{$key}.1} > 4">
+                        <div class="round round-{$key}-{$roundsInfo.{$key}.1}">
+                            <div class="round-details">{$roundsInfo.{$key}.0}</div>
+                            <xen:foreach loop="$round" key="$matchIndex" value="$match">
+                                <xen:if is="{$matchIndex} % 2 == 1">
+                                <ul class="matchup">
+                                    <li class="team team-top">
+                                        <xen:if is="{$match.c1}">
+                                        <select name="bracket[{$key}][{$matchIndex}][c1]">
+                                            <xen:foreach loop="$participants" value="$participant">
+                                                <option value="{$participant}" {xen:selected '{$match.c1} == {$participant}'}>{$participant}</option>
+                                            </xen:foreach>
+                                        </select>
+                                        </xen:if>
+                                    </li>
+                                    <li class="team team-bottom">
+                                        <xen:if is="{$match.c2}">
+                                        <select name="bracket[{$key}][{$matchIndex}][c2]">
+                                            <xen:foreach loop="$participants" value="$participant">
+                                                <option value="{$participant}" {xen:selected '{$match.c2} == {$participant}'}>{$participant}</option>
+                                            </xen:foreach>
+                                        </select>
+                                        </xen:if>
+                                    </li>
+                                </ul>   
+                                </xen:if>
+                            </xen:foreach>                            
+                        </div>
+                    </xen:if>
+                </xen:foreach>
+            </xen:if>
+            </div>
+        </div>
+    </section>
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd>
+			<input type="submit" value="{xen:phrase save}" accesskey="s" class="button primary" />
+			<input type="button" value="{xen:phrase cancel}" class="button OverlayCloser" accesskey="r" />			
+		</dd>
+	</dl>  
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+
+	</form>
+]]></template>
+    <template title="xfa_tourn_my_tournaments" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{xen:phrase xfa_tourn_view_tournaments_created}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link tournaments/my-tournaments}">{xen:phrase xfa_tourn_view_tournaments_created}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:require css="sidebar.css" />
+<xen:require css="xfa_tourn.css" />
+
+<div class="section">
+	
+	<ol class="tournamentList">
+	<xen:if is="{$tournaments}">
+        <xen:foreach loop="$tournaments" value="$tournament">
+		    <xen:include template="xfa_tourn_tournament_list_item">
+			    <xen:set var="$showCategoryTitle">1</xen:set>
+            </xen:include>
+        </xen:foreach>
+	<xen:else />
+		<li class="primaryContent">{xen:phrase xfa_tourn_currently_no_tournament_to_display}</li>
+	</xen:if>
+	</ol>
+	
+	<div class="pageNavLinkGroup">
+		<xen:pagenav link="tournaments/my-tournaments" linkparams="{$pageNavParams}" page="{$page}" perpage="{$perPage}" total="{$totalTournaments}" />
+	</div>
+	
+</div>]]></template>
+    <template title="xfa_tourn_participated_tournaments" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{xen:phrase xfa_tourn_view_tournaments_participated}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link tournaments/participated-tournaments}">{xen:phrase xfa_tourn_view_tournaments_participated}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:require css="sidebar.css" />
+<xen:require css="xfa_tourn.css" />
+
+<div class="section">
+	
+	<ol class="tournamentList">
+	<xen:if is="{$tournaments}">
+        <xen:foreach loop="$tournaments" value="$tournament">
+		    <xen:include template="xfa_tourn_tournament_list_item">
+			    <xen:set var="$showCategoryTitle">1</xen:set>
+            </xen:include>
+        </xen:foreach>
+	<xen:else />
+		<li class="primaryContent">{xen:phrase xfa_tourn_currently_no_tournament_to_display}</li>
+	</xen:if>
+	</ol>
+	
+	<div class="pageNavLinkGroup">
+		<xen:pagenav link="tournaments/participated-tournaments" linkparams="{$pageNavParams}" page="{$page}" perpage="{$perPage}" total="{$totalTournaments}" />
+	</div>
+	
+</div>]]></template>
+    <template title="xfa_tourn_tab_links" version_id="902010090" version_string="2.1.0"><![CDATA[<ul class="secondaryContent blockLinksList">
+	<xen:if is="{$visitor.user_id}"><li><a href="{xen:link tournaments/my-tournaments}">{xen:phrase xfa_tourn_view_tournaments_created}</a></li></xen:if>
+	<xen:if is="{$visitor.user_id}"><li><a href="{xen:link tournaments/participated-tournaments}">{xen:phrase xfa_tourn_view_tournaments_participated}</a></li></xen:if>
+</ul>]]></template>
+    <template title="xfa_tourn_tournament" version_id="902020090" version_string="2.2.0"><![CDATA[<xen:title>{$tournament.title}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link tournaments/categories, $category}">{$category.category_title}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:link tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:container var="$head.canonical">
+	<link rel="canonical" href="{xen:link 'canonical:tournaments'}" /></xen:container>
+
+<xen:require css="xfa_tourn.css" />
+
+<xen:require css="bb_code.css" />
+
+<xen:if is="{$tournament.type} == 'round_robin'">
+    <xen:require css="xfa_tourn_champion.css" />
+    <xen:require js="js/xfa/third_party/handlebars/handlebars.1.0.0.js" />
+    <xen:require js="js/xfa/third_party/lodash/lodash-2.2.1.min.js" />
+    <xen:require js="js/xfa/third_party/bacon/Bacon-1ab32ffb.min.js" />
+    <xen:require js="js/xfa/third_party/jquery-group/jquery.group.min.js" />
+    
+<xen:else />
+    <xen:require css="xfa_tourn_bracket.css" />
+    <xen:require js="js/xfa/third_party/jquery-bracket/0.7.2/jquery.bracket.min.js" />
+</xen:if>
+
+<div class="tournamentListBlock">
+    <div class="tournamentListSidebar">
+    	<div class="secondaryContent categoryList">
+        	<h3>{xen:phrase xfa_tourn_categories}</h3>
+        	<div class="pairsJustified">
+                <ol>
+                <xen:foreach loop="$categories" value="$_category">
+    				<li class="{xen:if '{$_category.tournament_category_id} == {$selectedCategoryId}', selected}">               
+                        <a href="{xen:link tournaments/categories, $_category}">{$_category.category_title}</a>
+    				</li>
+                </xen:foreach>
+                </ol>
+        	</div>      	
+    	</div>    	
+    	
+        <div class="secondaryContent">
+            	<h3>{xen:phrase xfa_tourn_participants} ({$tournament.user_count}/{$tournament.slots})</h3>
+            	<div class="pairsJustified">
+                	<xen:if is="{$participants}">
+                        <xen:foreach loop="$participants" value="$user">
+                            <xen:avatar user="$user" size="s" img="true" class="ToolTip" title="{$user.username}" />                
+                        </xen:foreach>
+                    <xen:else />
+                        {xen:phrase xfa_count_noone_has_registered_yet}
+                	</xen:if>
+            	</div>
+        </div>	
+        
+        <xen:if is="!{$tournament.bracket} AND ({$tournament.isRegistered} OR {$canRegisterTournament})">
+    	<div class="section {xen:string strtolower, $visitorLanguage.text_direction}" id="xfa_tourn_register">
+    		<div class="secondaryContent">
+    			<div style="text-align: center;">
+        			<xen:if is="!{$tournament.isRegistered}">
+        			    <h3><a href="{xen:link tournaments/register, $tournament}">{xen:phrase xfa_tourn_register_now}</a></h3>
+        			<xen:else />
+        			    <h3><a href="{xen:link tournaments/unregister, $tournament}">{xen:phrase xfa_tourn_unregister}</a></h3>
+        			</xen:if>
+    			</div>
+    		</div>
+    	</div>
+        </xen:if>
+    	
+	</div>
+	
+</div>
+
+<div class="tournamentListMain">
+    <xen:include template="xfa_tourn_tournament_tools" />
+    <xen:include template="xfa_tourn_tournament_view_tabs" />
+    <div class="tournamentTab">    
+    	<div class="section">
+            <div class="tournamentDescription bbCodeBlock bbCodeQuote">
+                <blockquote class="quoteContainer">
+                    <div class="quote">
+                        <div class="baseHtml">{xen:raw $tournament.description}</div>
+                    </div>
+                </blockquote>
+            </div>
+            
+            <xen:if is="{$tournament.type} == 'round_robin'">
+                <xen:include template="xfa_tourn_tournament_champ" />    
+            <xen:else />
+                <xen:include template="xfa_tourn_tournament_bracket" />        
+            </xen:if>
+    	</div>
+    </div>
+</div>]]></template>
+    <template title="xfa_tourn_tournaments_index" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{xen:phrase xfa_tourn_tournaments}</xen:title>
+
+<xen:container var="$head.canonical">
+	<link rel="canonical" href="{xen:link 'canonical:tournaments'}" /></xen:container>
+
+<xen:if is="{$canAddTournament}">
+	<xen:topctrl><a href="{xen:link tournaments/add, '', 'tournament_category_id={$category.tournament_category_id}'}" class="callToAction OverlayTrigger"><span>{xen:phrase xfa_tourn_add_tournament}</span></a></xen:topctrl>
+</xen:if>
+
+<xen:require css="sidebar.css" />
+<xen:require css="xfa_tourn.css" />
+
+<div class="tournamentListBlock">
+    <div class="tournamentListSidebar">
+    	<div class="secondaryContent categoryList">
+        	<h3>{xen:phrase xfa_tourn_categories}</h3>
+        	<div class="pairsJustified">
+                <ol>
+                <xen:foreach loop="$categories" value="$_category">
+    				<li class="{xen:if '{$_category.tournament_category_id} == {$selectedCategoryId}', selected}">               
+                        <a href="{xen:link tournaments/categories, $_category}">{$_category.category_title}</a>
+    				</li>
+                </xen:foreach>
+                </ol>
+        	</div>      	
+    	</div>    
+    	  	
+    	<xen:if is="{$topWinners}">
+		<div class="secondaryContent avatarList">
+        	<h3>{xen:phrase xfa_tourn_top_winners}</h3>
+			<ol>
+			<xen:foreach loop="$topWinners" value="$user">
+				<li>
+					<xen:avatar user="$user" size="s" img="true" class="NoOverlay" />
+					<xen:username user="$user" rich="true" class="NoOverlay" />
+					<div class="extraData">{xen:phrase xfa_tourn_wins}: {xen:number $user.xfa_tourn_wins}</a></div>
+				</li>
+			</xen:foreach>
+			</ol>
+		</div>    
+    	</xen:if>
+	</div>
+</div>
+
+<div class="tournamentListMain">
+
+	<div class="section">
+
+        <xen:include template="xfa_tourn_tournament_filter">
+        	<xen:set var="$linkBase" value="tournaments" />
+        	<xen:set var="$linkData" value="" />
+        </xen:include>
+    	
+    	<ol class="tournamentList">
+    	<xen:if is="{$tournaments}">
+            <xen:foreach loop="$tournaments" value="$tournament">
+			    <xen:include template="xfa_tourn_tournament_list_item">
+				    <xen:set var="$showCategoryTitle">1</xen:set>
+                </xen:include>
+            </xen:foreach>
+    	<xen:else />
+    		<li class="primaryContent">{xen:phrase xfa_tourn_currently_no_tournament_to_display}</li>
+    	</xen:if>
+    	</ol>
+    	
+    	<div class="pageNavLinkGroup">
+    		<xen:pagenav link="tournaments" linkparams="{$pageNavParams}" page="{$page}" perpage="{$perPage}" total="{$totalTournaments}" />
+    	</div>
+    	
+	</div>
+	
+</div>]]></template>
+    <template title="xfa_tourn_tournament_add" version_id="902010190" version_string="2.1.1"><![CDATA[<xen:title>{xen:if $tournament.tournament_id, '{xen:phrase xfa_tourn_edit_tournament}: {$tournament.title}', '{xen:phrase xfa_tourn_add_tournament}'}</xen:title>
+
+<xen:if is="{$tournament.tournament_id}">
+	<xen:navigation>
+		<xen:breadcrumb href="{xen:link full:tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+	</xen:navigation>
+</xen:if>
+
+<xen:require js="js/xfa/third_party/datetimepicker/2.4.5/jquery.datetimepicker.js" />
+<link href="styles/xfa/third_party/datetimepicker/2.4.5/jquery.datetimepicker.css" rel="stylesheet" />
+
+<form action="{xen:link 'tournaments/save', $tournament}" method="post" class="section AutoValidator xenForm" 
+	data-redirect="on"
+>
+
+	<div class="primaryContent">
+    	<fieldset>
+    		<xen:if is="{$tournament.tournament_id}">
+    			<dl class="ctrlUnit">
+    				<dt><label for="ctrl_tournament_category_id">{xen:phrase category}:</label></dt>
+    				<dd>
+    					<select name="tournament_category_id" class="textCtrl" id="ctrl_tournament_category_id" autofocus="true">
+    						<option value="">&nbsp;</option>
+    						<xen:foreach loop="$categories" key="$categoryId" value="$_category">
+    							<option value="{$categoryId}"
+    								{xen:selected '{$categoryId} == {$tournament.tournament_category_id}'}
+    								>{$_category.category_title}</option>
+    						</xen:foreach>
+    					</select>
+    				</dd>
+    			</dl>
+    		<xen:else />
+    			<input type="hidden" name="tournament_category_id" value="{$category.tournament_category_id}" />
+    		</xen:if>
+    		
+    		<xen:if is="!{$tournament.bracket}">
+    		<dl class="ctrlUnit">
+    			<dt><label for="ctrl_slots">{xen:phrase xfa_tourn_type}:</label></dt>
+    			<dd>
+    			    <select name="type" class="textCtrl">
+        			    <option value="single_el" {xen:selected '{$tournament.type} == "single_el"'}>{xen:phrase xfa_tourn_single_elimination}</option>
+        			    <option value="double_el" {xen:selected '{$tournament.type} == "double_el"'}>{xen:phrase xfa_tourn_double_elimination}</option>
+        			    <option value="round_robin" {xen:selected '{$tournament.type} == "round_robin"'}>{xen:phrase xfa_tourn_round_robin}</option>
+    			    </select>
+    			</dd>
+    		</dl>
+    		</xen:if>   		
+    		
+    		<dl class="ctrlUnit titleUnit">
+    			<dt><label for="ctrl_title">{xen:phrase title}:</label></dt>
+    			<dd>
+    				<input type="text" name="title" value="{$tournament.title}" class="textCtrl"
+    					data-liveTitleTemplate="{xen:if $tournament.tournament_id, '{xen:phrase xfa_tourn_edit_tournament}', '{xen:phrase xfa_tourn_add_tournament}'}: <em>%s</em>"
+    					id="ctrl_title_tournament_add" maxlength="100"
+    				/>
+    			</dd>
+    		</dl>	
+    
+    		<dl class="ctrlUnit">
+    			<dt><label for="ctrl_description">{xen:phrase xfa_tourn_description}:</label></dt>
+    			<dd>
+    				{xen:raw $descriptionEditorTemplate}
+    				<p class="explain">{xen:phrase xfa_tourn_provide_tournament_description}</p>
+    			</dd>
+    		</dl>	
+    
+    		<dl class="ctrlUnit">
+    			<dt><label for="ctrl_rules">{xen:phrase xfa_tourn_rules}:</label></dt>
+    			<dd>
+    				{xen:raw $rulesEditorTemplate}
+    				<p class="explain">{xen:phrase xfa_tourn_provide_tournament_rules}</p>
+    			</dd>
+    		</dl>	
+    		
+    		<xen:if is="!{$tournament.bracket}">
+    		<dl class="ctrlUnit">
+    			<dt><label for="ctrl_slots">{xen:phrase xfa_tourn_max_participants}:</label></dt>
+    			<dd>
+    			    <select name="slots" class="textCtrl">
+        			    <option value="2" {xen:selected '{$tournament.slots} == 2'}>2</option>
+        			    <option value="4" {xen:selected '{$tournament.slots} == 4'}>4</option>
+        			    <option value="8" {xen:selected '{$tournament.slots} == 8'}>8</option>
+        			    <option value="16" {xen:selected '{$tournament.slots} == 16'}>16</option>
+        			    <option value="32" {xen:selected '{$tournament.slots} == 32'}>32</option>
+        			    <option value="64" {xen:selected '{$tournament.slots} == 64'}>64</option>
+        			    <option value="128" {xen:selected '{$tournament.slots} == 128'}>128</option>
+        			    <option value="256" {xen:selected '{$tournament.slots} == 256'}>256</option>
+    			    </select>
+    			</dd>
+    		</dl>	
+    		
+    		<dl class="ctrlUnit titleUnit">
+                <input type="hidden" name="end_date" id="end_date" value="{$tournament.end_date}" />
+    			<dt><label for="ctrl_end_date">{xen:phrase xfa_tourn_registering_end}:</label></dt>
+    			<dd>
+    				<input type="text" name="end_date_field" value="{$tournament.end_date_formatted}" class="textCtrl" id="ctrl_end_date" />
+    			</dd>
+    		</dl> 
+    		
+    		<dl class="ctrlUnit">
+        		<dt><label for="ctrl_private">{xen:phrase xfa_tourn_tournament_options}:</label></dt>
+        		<dd>
+        		    <input type="checkbox" name="private" {xen:checked '{$tournament.private}'} value="1" /> {xen:phrase xfa_tourn_private_tournament}<br />
+        		    <input type="checkbox" name="automatic_generation" {xen:checked '{$tournament.automatic_generation}'} value="1" /> {xen:phrase xfa_tourn_automatic_bracket_generation}<br />
+        		    <input type="checkbox" name="third_place" {xen:checked '{$tournament.third_place}'} value="1" /> {xen:phrase xfa_tourn_play_third_place}        		    
+        		</dd>
+    		</dl>
+    		</xen:if>
+    		    		
+    	</fieldset>
+    	
+    	<dl class="ctrlUnit submitUnit">
+    		<dt></dt>
+    		<dd>
+    			<input type="submit" value="{xen:phrase save}" accesskey="s" class="button primary" />
+    			<input type="button" value="{xen:phrase cancel}" class="button OverlayCloser" accesskey="r" />			
+    		</dd>
+    	</dl>    	
+	</div>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#ctrl_end_date').datetimepicker({        
+        onChangeDateTime: function(ct,$i){
+            if (ct) { $('#end_date').val(ct.dateFormat('unixtime')); }
+        }
+    });
+});
+</script>]]></template>
+    <template title="xfa_tourn_tournament_bracket" version_id="901010090" version_string="1.1.0"><![CDATA[<div class="tournamentBracket" style="overflow: auto;"></div>
+
+<xen:if is="{$canEditTournament} AND {$tournament.bracket}">
+    <div style="text-align: center; margin-top: 10px;"><a href="#" onclick="return saveScores();" class="callToAction"><span>{xen:phrase xfa_tourn_save_scores}</span></a></div>
+</xen:if>
+
+<script type="text/javascript">
+    var bracketData = {xen:raw $bracketData}
+    
+    function render_fn(container, data, score) {
+        container.append(data)
+    }
+    
+    function edit_fn(container, data, doneCb) {
+    }
+    
+    function saveScores()
+    {
+			XenForo.ajax(
+				'{xen:link tournaments/saveScores, $tournament}',
+				$('.tournamentBracket').bracket('data'),
+				saveScoresSucess
+			); 
+        
+        return false;
+    }
+    
+    function saveScoresSucess(ajaxData, textStatus)
+    {
+    }
+    
+    $('.tournamentBracket').bracket({
+        init: bracketData,
+        skipConsolationRound: {xen:if '{$tournament.third_place}', false, true},
+        <xen:if is="{$canEditTournament}">
+        save: function(){}, /* without save() labels are disabled */
+        decorator: {edit: edit_fn, render: render_fn}         
+        </xen:if>
+    });        
+    
+    <xen:if is="{$canEditTournament}">
+    $('.tournamentBracket .tools').remove();
+    </xen:if>
+</script>]]></template>
+    <template title="xfa_tourn_tournament_champ" version_id="901010090" version_string="1.1.0"><![CDATA[<div id="tournamentChamp"></div>
+
+<xen:if is="{$canEditTournament} AND {$tournament.bracket}">
+    <div style="text-align: center; margin-top: 10px;"><a href="#" onclick="return saveScores();" class="callToAction"><span>{xen:phrase xfa_tourn_save_scores}</span></a></div>
+</xen:if>
+
+<script type="text/javascript">
+    var champData = {xen:raw $bracketData};
+    var resultData= JSON.stringify({xen:raw $bracketData}); 
+    
+    jQuery.extend(XenForo.phrases,
+    {
+        xfa_tourn_round: "{xen:phrase xfa_tourn_round}",
+        xfa_tourn_points_abbrev: "{xen:phrase xfa_tourn_points_abbrev}",
+        xfa_tourn_wins_abbrev: "{xen:phrase xfa_tourn_wins_abbrev}",
+        xfa_tourn_ties_abbrev: "{xen:phrase xfa_tourn_ties_abbrev}",
+        xfa_tourn_losses_abbrev: "{xen:phrase xfa_tourn_losses_abbrev}"
+    });
+    
+    $( document ).ready(function() {
+        $('#tournamentChamp').group({
+            init: champData,
+            <xen:if is="{$canEditTournament} AND {$tournament.bracket}">
+            save: function(state) { resultData = JSON.stringify(state); }
+            </xen:if>
+        }) 
+    });
+    
+    <xen:if is="{$canEditTournament} AND {$tournament.bracket}">
+    function saveScores()
+    {
+    	XenForo.ajax(
+    		'{xen:link tournaments/saveScores, $tournament}',
+    		{bracketData: resultData},
+    		saveScoresSucess
+    	); 
+    
+        return false;
+    }
+    
+    function saveScoresSucess(ajaxData, textStatus)
+    {
+    }
+    </xen:if>
+</script>]]></template>
+    <template title="xfa_tourn_tournament_choose_category" version_id="901000090" version_string="1.0.0"><![CDATA[<xen:title>{xen:phrase xfa_tourn_choose_category}</xen:title>
+
+<form action="{xen:link 'tournaments/add'}" method="post" class="xenForm formOverlay">
+
+	<dl class="ctrlUnit">
+		<dt><label for="ctrl_tournament_category_id">{xen:phrase category}:</label></dt>
+		<dd>
+			<select name="tournament_category_id" class="textCtrl" id="ctrl_tournament_category_id" autofocus="true">
+				<option value="0">&nbsp;</option>
+				<xen:foreach loop="$categories" key="$categoryId" value="$_category">
+					<option value="{$categoryId}">{$_category.category_title}</option>
+				</xen:foreach>
+			</select>
+			<p class="explain">{xen:phrase xfa_tourn_select_category_that_best_fits_your_tournament}</p>
+		</dd>
+	</dl>
+
+	<dl class="ctrlUnit submitUnit">
+		<dt></dt>
+		<dd>
+			<input type="submit" value="{xen:phrase continue}..." accesskey="s" class="button primary" />
+		</dd>
+	</dl>
+
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
+    <template title="xfa_tourn_tournament_filter" version_id="901000090" version_string="1.0.0"><![CDATA[<xen:if is="{$xenOptions.currentVersionId} < 1050034">
+	<div class="tournamentHeaders">
+		<ol class="tabs">
+			<li class="{xen:if '{$order} == "free_slots"', active}"><a href="{xen:link $linkBase, $linkData, '_params={$pageNavParams}', 'order='}">{xen:phrase xfa_tourn_remaining_slots}</a></li>
+			<li class="{xen:if '{$order} == "newest"', active}"><a href="{xen:link $linkBase, $linkData, '_params={$pageNavParams}', 'order=newest'}">{xen:phrase xfa_tourn_newest_tournaments}</a></li>
+			<li class="{xen:if '{$order} == "last_update"', active}"><a href="{xen:link $linkBase, $linkData, '_params={$pageNavParams}', 'order=last_update'}">{xen:phrase xfa_tourn_latest_updates}</a></li>
+			<li class="{xen:if '{$order} == "end_date"', active}"><a href="{xen:link $linkBase, $linkData, '_params={$pageNavParams}', 'order=end_date'}">{xen:phrase xfa_tourn_end_registering}</a></li>
+		</ol>
+	</div>
+<xen:else />
+    <xen:require css="action_filter_row.css" />
+	<div class="actionFilterRow">
+		<div class="extraLinks">
+    		<xen:set var="$tournamentSortOptions" value="{xen:array
+    			'free_slots={xen:phrase xfa_tourn_remaining_slots}',
+    			'newest={xen:phrase xfa_tourn_newest_tournaments}',
+    			'last_update={xen:phrase xfa_tourn_latest_updates}',
+    			'end_date={xen:phrase xfa_tourn_end_registering}'
+    		}" />
+            <div class="Popup JsOnly">
+            	<span class="muted">{xen:phrase sort_by}:</span>
+            	<a rel="Menu">{xen:if {$tournamentSortOptions.{$order}}, {$tournamentSortOptions.{$order}}, {$tournamentSortOptions.{$defaultOrder}}}</a>
+            	<div class="Menu">
+            		<div class="primaryContent menuHeader">
+            			<h3>{xen:phrase sort_by}...</h3>
+            		</div>
+            		<ul class="secondaryContent blockLinksList">
+            		<xen:foreach loop="$tournamentSortOptions" key="$tournamentSortKey" value="$tournamentSortOption">
+            			<li><a href="{xen:link $linkBase, $linkData, '_params={$pageNavParams}', 'order={xen:if "{$defaultOrder} == {$tournamentSortKey}", '', $tournamentSortKey}'}" class="{xen:if '{$order} == {$tournamentSortKey}', selected}">{$tournamentSortOption}</a></li>
+            		</xen:foreach>
+            		</ul>
+            	</div>
+            </div>
+		</div>
+	</div>        
+</xen:if>]]></template>
+    <template title="xfa_tourn_tournament_list_item" version_id="902010090" version_string="2.1.0"><![CDATA[<li class="tournamentListItem" id="tournament-{$tournament.tournament_id}">
+    <div class="listBlock main">
+        <div class="listBlockInner">    
+            <h3 class="title">
+                <a href="{xen:link tournaments, $tournament}">{$tournament.title}</a>
+            </h3>
+            <div class="tournamentDetails muted"><xen:username user="{$tournament}" />,
+                <a href="{xen:link tournaments, $tournament}" class="faint"><xen:datetime time="{$tournament.creation_date}" /></a><xen:comment>
+                </xen:comment><xen:if is="{$showCategoryTitle}">, <a href="{xen:link tournaments/categories, $tournament}">{$tournament.category_title}</a></xen:if>
+            </div>
+        </div>
+    </div>
+    <div class="listBlock tournamentStats">
+        <div class="listBlockInner">
+            <div class="pairsJustified">
+                <xen:if is="{$tournament.winner_id}">
+                    <dl class="tournamentWinner"><dt>{xen:phrase xfa_tourn_winner}:</dt> <dd><xen:username user="$tournament.winner" rich="true" /></dd></dl>
+                <xen:else />
+                <dl class="tournamentEnd">
+                        <dt>{xen:phrase xfa_tourn_end_registering}:</dt>
+                        <dd>
+                            <xen:if is="{$tournament.endRegistration}">
+                                {xen:phrase xfa_tourn_closed}
+                            <xen:elseif is="{$tournament.end_date}" />
+                                <xen:datetime time="{$tournament.end_date}" />       
+                            <xen:else />
+                                {xen:phrase xfa_tourn_no_milestone}                     
+                            </xen:if>
+                        </dd>
+                </dl>
+                <dl class="tournamentSlots"><dt>{xen:phrase xfa_tourn_slots}:</dt> <dd>{$tournament.user_count}/{$tournament.slots}</dl>
+                <dl class="tournamentUpdated"><dt>{xen:phrase xfa_tourn_updated}:</dt> <dd><xen:datetime time="{$tournament.last_update}" /></dd></dl>
+                </xen:if>
+            </div>
+        </div>
+    </div>
+</li>]]></template>
+    <template title="xfa_tourn_tournament_rules" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:title>{$tournament.title}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link tournaments/categories, $category}">{$category.category_title}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:link tournaments, $tournament}">{$tournament.title}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:container var="$head.canonical">
+	<link rel="canonical" href="{xen:link 'canonical:tournaments'}" /></xen:container>
+
+<xen:require css="xfa_tourn.css" />
+
+<xen:require css="bb_code.css" />
+
+<div class="tournamentListBlock">
+    <div class="tournamentListSidebar">
+    	<div class="secondaryContent categoryList">
+        	<h3>{xen:phrase xfa_tourn_categories}</h3>
+        	<div class="pairsJustified">
+                <ol>
+                <xen:foreach loop="$categories" value="$_category">
+    				<li class="{xen:if '{$_category.tournament_category_id} == {$selectedCategoryId}', selected}">               
+                        <a href="{xen:link tournaments/categories, $_category}">{$_category.category_title}</a>
+    				</li>
+                </xen:foreach>
+                </ol>
+        	</div>      	
+    	</div>    	
+    	
+        <div class="secondaryContent">
+            	<h3>{xen:phrase xfa_tourn_participants} ({$tournament.user_count}/{$tournament.slots})</h3>
+            	<div class="pairsJustified">
+                	<xen:if is="{$participants}">
+                        <xen:foreach loop="$participants" value="$user">
+                            <xen:avatar user="$user" size="s" img="true" class="ToolTip" title="{$user.username}" />                
+                        </xen:foreach>
+                    <xen:else />
+                        {xen:phrase xfa_count_noone_has_registered_yet}
+                	</xen:if>
+            	</div>
+        </div>	
+        
+        <xen:if is="!{$tournament.bracket}">
+    	<div class="section {xen:string strtolower, $visitorLanguage.text_direction}" id="xfa_tourn_register">
+    		<div class="secondaryContent">
+    			<div style="text-align: center;">
+        			<xen:if is="!{$tournament.isRegistered}">
+        			    <h3><a href="{xen:link tournaments/register, $tournament}">{xen:phrase xfa_tourn_register_now}</a></h3>
+        			<xen:else />
+        			    <h3><a href="{xen:link tournaments/unregister, $tournament}">{xen:phrase xfa_tourn_unregister}</a></h3>
+        			</xen:if>
+    			</div>
+    		</div>
+    	</div>
+        </xen:if>
+    	
+	</div>
+	
+</div>
+
+<div class="tournamentListMain">
+    <xen:include template="xfa_tourn_tournament_tools" />
+    <xen:include template="xfa_tourn_tournament_view_tabs" />
+    <div class="tournamentTabRules">    
+    	<div class="section">
+            <div class="baseHtml">{xen:raw $tournament.rules}</div>
+    	</div>
+    </div>
+</div>]]></template>
+    <template title="xfa_tourn_tournament_tools" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:if hascontent="true">
+    <div class="Popup">
+        <a rel="Menu">{xen:phrase xfa_tourn_tournament_tools}</a>
+        <div class="Menu">
+            <xen:contentcheck>
+            <xen:if hascontent="true">
+                <div class="primaryContent menuHeader"><h3>{xen:phrase xfa_tourn_tournament_tools}</h3></div>
+                <ul class="secondaryContent mediaTools blockLinksList">
+                    <xen:contentcheck>
+                        <xen:if is="!{$tournament.bracket}">
+                            <xen:if is="{$canManageTournament}">
+                                <li><a href="{xen:link tournaments/manage-users, $tournament}" class="OverlayTrigger">{xen:phrase xfa_tourn_manage_users}</a></li>
+                                <li><a href="{xen:link tournaments/generate-matches, $tournament}">{xen:phrase xfa_tourn_generate_matches}</a></li>
+                            
+                            </xen:if>
+                            <xen:if is="{$canInviteTournament}">
+                                <li><a href="{xen:link tournaments/invite-users, $tournament}" class="OverlayTrigger">{xen:phrase xfa_tourn_invite_users}</a></li>
+                            </xen:if>
+                            <xen:if is="{$canAddToTournament} && {$tournament.user_count} < {$tournament.slots}">
+                                <li><a href="{xen:link tournaments/add-users, $tournament}" class="OverlayTrigger">{xen:phrase xfa_tourn_add_users}</a></li>
+                            </xen:if>
+                        <xen:else />
+                            <xen:if is="!{$tournament.winner_id}">
+                                <li><a href="{xen:link tournaments/unvalidate-matches, $tournament}">{xen:phrase xfa_tourn_unvalidate_matches}</a></li>
+                            </xen:if>
+                        </xen:if>
+                        <xen:if is="{$canEditTournament}">
+                            <li><a href="{xen:link tournaments/edit, $tournament}" class="OverlayTrigger">{xen:phrase xfa_tourn_edit_tournament}</a></li>
+                        </xen:if>
+                        <xen:if is="{$canDeleteTournament}">
+                            <li><a href="{xen:link tournaments/delete, $tournament}" class="OverlayTrigger">{xen:phrase xfa_tourn_delete_tournament}</a></li>
+                        </xen:if>
+                    </xen:contentcheck>
+                </ul>
+                </xen:if>
+            </xen:contentcheck>
+        </div>
+    </div>
+</xen:if>]]></template>
+    <template title="xfa_tourn_tournament_view_tabs" version_id="902010090" version_string="2.1.0"><![CDATA[<xen:if hascontent="true">
+<xen:require css="xfa_tourn_tournament_view_tabs.css" />
+
+<div class="tournamentTabs">
+	<xen:contentcheck>
+	<xen:if hascontent="true">
+	<ul class="tabs">
+		<li class="tournamentTab {xen:if "{$selectedTab} == 'content'", active}">
+			<a href="{xen:link tournaments, $tournament}">{xen:phrase xfa_tourn_content}</a>
+		</li>
+		<xen:contentcheck>
+		<xen:if is="{$tournament.rules}">    
+    		<li class="tournamentTabRules {xen:if "{$selectedTab} == 'rules'", active}">
+    			<a href="{xen:link tournaments/rules, $tournament}">{xen:phrase xfa_tourn_rules}</a>
+    		</li>		
+		</xen:if>
+		<xen:if is="{$thread}"><li class="tournamentTabDiscussion {xen:if "{$selectedTab} == 'discussion'", active}">
+			<a href="{xen:link threads, $thread}">{xen:phrase xfa_tourn_discussion}</a>
+		</li></xen:if>
+		</xen:contentcheck>
+	</ul>
+	</xen:if>
+	</xen:contentcheck>
+</div>
+</xen:if>]]></template>
+    <template title="xfa_tourn_tournament_view_tabs.css" version_id="902010090" version_string="2.1.0"><![CDATA[.tournamentTabs
+{
+	position: relative;
+}
+
+	.tournamentTabs .tabs
+	{
+		padding-left: 10px;
+	}]]></template>
+  </templates>
+  <public_template_modifications>
+    <modification template="account_alert_preferences" modification_key="xfa_tourn_account_alert_preferences" description="Add tournament alert management" execution_order="10" enabled="1" action="str_replace">
+      <find><![CDATA[<xen:hook name="account_alerts_extra" />]]></find>
+      <replace><![CDATA[<xen:include template="xfa_tourn_account_alert_preferences" />
+	$0]]></replace>
+    </modification>
+    <modification template="member_card" modification_key="xfa_tourn_member_card" description="Add number of wins to member card" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#(<xen:hook name="member_card_stats".*)(</xen:hook>)#sU]]></find>
+      <replace><![CDATA[$1
+<xen:if is="{$user.xfa_tourn_wins} AND {$canViewTournaments}"><dt>{xen:phrase xfa_tourn_tournaments_won}:</dt> <dd><a href="{xen:link tournaments}" class="concealed">{xen:number $user.xfa_tourn_wins}</a></dd></xen:if>
+$2]]></replace>
+    </modification>
+    <modification template="member_view" modification_key="xfa_tourn_member_view_stats" description="Add number of wins to member view" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#(<xen:hook name="member_view_info_block">.*)(</xen:hook>)#sU]]></find>
+      <replace><![CDATA[$1
+<xen:if is="{$user.xfa_tourn_wins} AND {$canViewTournaments}">
+<dl><dt>{xen:phrase xfa_tourn_tournaments_won}:</dt>
+	<dd><a href="{xen:link tournaments}">{xen:number $user.xfa_tourn_wins}</a></dd></dl>
+</xen:if>
+$2]]></replace>
+    </modification>
+    <modification template="thread_view" modification_key="xfa_tourn_thread_view" description="Add the tournament stuff to the thread view" execution_order="10" enabled="1" action="preg_replace">
+      <find><![CDATA[#<xen:h1>(.*)</xen:h1>#sU]]></find>
+      <replace><![CDATA[$0
+<xen:if is="{$tournament}">
+	<xen:include template="xfa_tourn_tournament_view_tabs" />
+</xen:if>]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
