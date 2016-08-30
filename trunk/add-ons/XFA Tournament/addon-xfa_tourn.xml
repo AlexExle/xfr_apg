@@ -282,24 +282,24 @@ This thread will be used to post updates about the tournament.]]></phrase>
     <phrase title="xfa_tourn_max_participants" version_id="901000090" version_string="1.0.0"><![CDATA[Max. number of participants]]></phrase>
     <phrase title="xfa_tourn_message_create_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[{username} created a new tournament:
 
-[url={documentLink}][plain]{title}[/plain][/url]
+
 [quote]{snippet}[/quote]
 
 [url={link}]View this tournament...[/url]]]></phrase>
     <phrase title="xfa_tourn_message_delete_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[This tournament has been deleted and is no longer accessible.]]></phrase>
     <phrase title="xfa_tourn_message_matches_started" version_id="902010090" version_string="2.1.0"><![CDATA[Matches have just started in the tournament:
 
-[url={documentLink}][plain]{title}[/plain][/url]
+
 
 [url={link}]View this tournament...[/url]]]></phrase>
     <phrase title="xfa_tourn_message_matches_unvalidated" version_id="902010090" version_string="2.1.0"><![CDATA[Matches in the tournament have been unvalidated:
 
-[url={documentLink}][plain]{title}[/plain][/url]
+
 
 [url={link}]View this tournament...[/url]]]></phrase>
     <phrase title="xfa_tourn_message_x_won_tournament" version_id="902010090" version_string="2.1.0"><![CDATA[[url={userLink}]{username}[/url] won the tournament:
 
-[url={documentLink}][plain]{title}[/plain][/url]
+
 
 [url={link}]View this tournament...[/url]]]></phrase>
     <phrase title="xfa_tourn_newest_tournaments" version_id="901000090" version_string="1.0.0"><![CDATA[Newest Tournament]]></phrase>
