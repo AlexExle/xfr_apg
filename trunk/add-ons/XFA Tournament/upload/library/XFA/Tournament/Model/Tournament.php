@@ -722,7 +722,6 @@ class XFA_Tournament_Model_Tournament extends XenForo_Model
                         /* Save the winner */
 						$fetchOption = ($tournament['team_mode'] ==1 ? XFA_Tournament_Model_Participant::FETCH_TEAM : XFA_Tournament_Model_Participant::FETCH_USER);
                         $participants   = $this->_getParticipantModel()->getParticipants(array('tournament_id' => $tournament['tournament_id']), array('join' => $fetchOption));
-						XenForo_Error::logError(json_encode($participants));
                         /* Winner is 0 */
                         if ($inputBracket['results'][0][($nbRounds - $i)][$idxCheck][0] > $inputBracket['results'][0][($nbRounds - $i)][$idxCheck][1])
                         {
