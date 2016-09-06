@@ -316,7 +316,12 @@ class XFA_Tournament_Model_Tournament extends XenForo_Model
     	
     	if ($visitor['user_id'])
     	{
-        	$tournament['isRegistered'] = $this->_getParticipantModel()->getParticipantByTournamentAndUserId($tournament['tournament_id'], $visitor['user_id']);
+			if ($tournament["team_mode"] == 0) {
+				$tournament['isRegistered'] = $this->_getParticipantModel()->getParticipantByTournamentAndUserId($tournament['tournament_id'], $visitor['user_id']);
+			}
+			else {
+				$tournament['isRegistered'] =  $this->_getParticipantModel()->getTeamParticipantsByTournamentAndUserId($tournament['tournament_id'], $visitor['user_id']);
+			}
     	}
     	else
     	{

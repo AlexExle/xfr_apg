@@ -359,7 +359,21 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 		{
 			$thread = false;
 		}
-        
+		$teams = null;
+		if ($tournament["team_mode"] = 1)
+		{
+			$visitor = XenForo_Visitor::getInstance();
+			$teams =  $this->getModelFromCache('Nobita_Teams_Model_Member')->getAllTeamsUserJoined($visitor['user_id']);
+			$count = count($teams);
+			for($i = 0; $i < $count; ++$i) {
+				if ($this->_getParticipantModel()->getParticipantByTournamentAndUserId($tournament['tournament_id'], $teams[$i]["team_id"]) != null)
+				{
+					unset($teams[$i]);
+				}
+			}
+				//unset()
+		}
+		XenForo_Error::logError(json_encode($tournament["isRegistered"]));
     	
 		$viewParams = array(
     		'selectedTab'               => 'content',
@@ -376,6 +390,7 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 			'canManageTournament'       => $tournamentModel->canManage($tournament, $category),
 			'canInviteTournament'       => $tournamentModel->canInvite($tournament, $category),
 			'canAddToTournament'        => $tournamentModel->canAddUser($tournament, $category),
+			'teams'						=> $teams
 		);
 
 		return $this->responseView('XFA_Tournament_ViewPublic_Tournament_View', 'xfa_tourn_tournament', $viewParams);
@@ -502,16 +517,53 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
     	{
 			throw $this->getNoPermissionResponseException();
     	}
-    	
-		/* Let's write the data */
-		$dw = XenForo_DataWriter::create('XFA_Tournament_DataWriter_Participant');
-
-		/* Set user info */
 		$visitor = XenForo_Visitor::getInstance();
-		$dw->set('tournament_id',  $tournament['tournament_id']);
-		$dw->set('user_id',  $visitor['user_id']);
-		$dw->set('username', $visitor['username']);
-		$dw->save();
+
+
+		if ($tournament['team_mode'] == 1) {
+			$team_id = $this->getInput()->filterSingle('team_id', XenForo_Input::UINT);
+			$team = null;
+
+			$teamMemberModel = $this->getModelFromCache('Nobita_Teams_Model_Member');
+			$teamModel = $this->getModelFromCache('Nobita_Teams_Model_Team');
+			if ($team_id > 0)
+			{
+				$team =$teamModel ->getTeamById($team_id);
+			}
+			else {
+				$team = $teamMemberModel->getAllTeamsUserJoined($visitor['user_id'])[0];
+			}
+			$teamMember = $teamMemberModel->getMembers(array("user_id" => $visitor['user_id'], "team_id" => $team["team_id"]), array("join" => $teamMemberModel::FETCH_MEMBER_ROLE))[0];
+			XenForo_Error::logError(json_encode($teamMember));
+			if (strpos(' admin captain manager', $teamMember['member_role_id']) < 0)
+			{
+				return $this->responseError("Вы должны быть Капитаном\Менеджером команды, чтобы иметь право зарегистрировать ее.");
+			}
+			else
+			{
+				/* Let's write the data */
+				$dw = XenForo_DataWriter::create('XFA_Tournament_DataWriter_Participant');
+
+				/* Set user info */
+
+				$dw->set('tournament_id',  $tournament['tournament_id']);
+				$dw->set('user_id',  $team['team_id']);
+				$dw->set('username', $team['title']);
+				$dw->save();
+			}
+		}
+		else {
+
+			/* Let's write the data */
+			$dw = XenForo_DataWriter::create('XFA_Tournament_DataWriter_Participant');
+
+			/* Set user info */
+
+			$dw->set('tournament_id',  $tournament['tournament_id']);
+			$dw->set('user_id',  $visitor['user_id']);
+			$dw->set('username', $visitor['username']);
+			$dw->save();
+		}
 		
         /* Redirect */
 		return $this->responseRedirect(
@@ -533,15 +585,49 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
     	{
 			throw $this->getNoPermissionResponseException();
     	}
-    	
-		/* Let's write the data */
-		$dw = XenForo_DataWriter::create('XFA_Tournament_DataWriter_Participant');
-
-		/* Set user info */
 		$visitor = XenForo_Visitor::getInstance();
-		$dw->setExistingData($tournament['isRegistered']);
-		$dw->delete();
-		
+		if ($tournament['team_mode'] == 1) {
+			$team_id = $this->getInput()->filterSingle('team_id', XenForo_Input::UINT);
+			$team = null;
+			$teamMemberModel = $this->getModelFromCache('Nobita_Teams_Model_Member');
+			$teamModel = $this->getModelFromCache('Nobita_Teams_Model_Team');
+			if ($team_id > 0)
+			{
+				$team = $teamModel ->getTeamById($team_id);
+			}
+			else {
+				$team = $teamMemberModel->getAllTeamsUserJoined($visitor['user_id'])[0];
+			}
+			$teamMember = $teamMemberModel->getMembers(array("user_id" => $visitor['user_id'], "team_id" => $team["team_id"]), array("join" => $teamMemberModel::FETCH_MEMBER_ROLE))[0];
+			XenForo_Error::logError(json_encode($teamMember));
+			$this->_getParticipantModel()->getParticipantByTournamentAndUserId($tournament['tournament_id'], $teamMember["user_id"]);
+			if (strpos(' admin captain manager', $teamMember['member_role_id']) < 0)
+			{
+				return $this->responseError("Вы должны быть Капитаном\Менеджером команды, чтобы иметь право снять ее с соревнований.");
+			}
+			else
+			{
+
+				/* Let's write the data */
+				$dw = XenForo_DataWriter::create('XFA_Tournament_DataWriter_Participant');
+
+				/* Set user info */
+				$fetchOption = XFA_Tournament_Model_Participant::FETCH_TEAM;
+				$participant   = $this->_getParticipantModel()->getParticipantByTournamentAndUserId($tournament['tournament_id'],$team['team_id'] , array('join' => $fetchOption));
+				$dw->setExistingData($participant);
+				$dw->delete();
+			}
+		}
+		else {
+
+			/* Let's write the data */
+			$dw = XenForo_DataWriter::create('XFA_Tournament_DataWriter_Participant');
+
+			/* Set user info */
+			$visitor = XenForo_Visitor::getInstance();
+			$dw->setExistingData($tournament['isRegistered']);
+			$dw->delete();
+		}
         /* Redirect */
 		return $this->responseRedirect(
 			XenForo_ControllerResponse_Redirect::SUCCESS,

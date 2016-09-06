@@ -51,7 +51,24 @@ class XFA_Tournament_Model_Participant extends XenForo_Model
 			WHERE participant.tournament_id = ? AND participant.user_id = ?
 		', array($tournamentId, $userId)); 	
 	}
-		
+
+
+	public function getTeamParticipantsByTournamentAndUserId($tournamentId, $userId, array $fetchOptions = array())
+	{
+		$joinOptions = $this->prepareParticipantFetchOptions($fetchOptions);
+
+		return $this->_getDb()->fetchAll('
+			SELECT participant.*
+				' . $joinOptions['selectFields'] . '
+			FROM xfa_tourn_participant AS participant
+				' . $joinOptions['joinTables'] . '
+			WHERE participant.tournament_id = ? AND participant.user_id in 
+				(SELECT team_id FROM xf_team as t WHERE EXISTS
+								( SELECT team_id FROM xf_team_member WHERE xf_team_member.team_id = t.team_id and xf_team_member.user_id = ? ))
+		', array($tournamentId, $userId));
+	}
+
+
 	public function getParticipants(array $conditions = array(), array $fetchOptions = array())
 	{
 		$whereClause    = $this->prepareParticipantConditions($conditions, $fetchOptions);
