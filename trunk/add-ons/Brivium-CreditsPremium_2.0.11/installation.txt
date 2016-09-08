@@ -1,0 +1,17 @@
+INSTALLATION:
+- Uninstall Brivium - Credits Paypal Payment add-on (optional).
+- Upload contents of Upload folder to root directory, overwriting any existing files.
+- Install XML\addon-Brivium_Credits.xml file.
+- To set options go to: Admin > Options > Brivium - Credits Premium
+- To set currencies go to: Admin > Credits > Currencies
+- To set event for each currency go to: Admin > Credits > Events
+
+UPGRADING:
+- Upload contents of Upload folder to root directory, overwriting any existing files.
+- Point to ACP > Add-ons > List Add-ons > Find Credits Premium and select the options Control > Upgrade from XML\addon-Brivium_Credits.xml file.
+
+UPGRADING FROM CREDITS LITE (Free)
+Note: This upgrade will use default currency on Credits (free) to be default currency on Credits Premium. Another currencies will be deleted.
+- Point to ACP > Add-ons > List Add-ons > Find Credits and select the options Control > Disable.
+- Upload contents of Upload folder to root directory, overwriting any existing files.
+- Point to ACP > Add-ons > List Add-ons > Find Credits and select the options Control > Upgrade from XML\addon-Brivium_Credits.xml file.

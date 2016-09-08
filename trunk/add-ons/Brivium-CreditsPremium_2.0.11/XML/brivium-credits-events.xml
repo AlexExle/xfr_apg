@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<brc_events>
+  <event action_id="login" amount="5.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="1" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="exchange" amount="0.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="withdraw" amount="0.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="transfer" amount="0.500000" sub_amount="0.000000" multiplier="0.050000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[["0"]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="paypalPayment" amount="0.000000" sub_amount="0.000000" multiplier="1.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="registration" amount="10.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="birthday" amount="10.000000" sub_amount="0.000000" multiplier="1.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="1" max_time="1" apply_max="31536000" extra_min="13.000000" extra_max="40.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="importVbb" amount="0.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="interest" amount="3.000000" sub_amount="0.000000" multiplier="0.050000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="1000.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="updateFullProfile" amount="10.000000" sub_amount="-10.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="uploadAvatar" amount="3.000000" sub_amount="-3.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="updateStatus" amount="2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="1" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="follow" amount="2.000000" sub_amount="-2.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="getFollower" amount="4.000000" sub_amount="-4.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="profilePost" amount="2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="getProfilePost" amount="4.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="likeProfilePost" amount="1.000000" sub_amount="-1.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="receiveProfilePostLike" amount="2.000000" sub_amount="-2.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="createConversation" amount="5.000000" sub_amount="-5.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="createNewThread" amount="10.000000" sub_amount="0.000000" multiplier="0.010000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="20.000000" extra_max="1000.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="threadDeleted" amount="-10.000000" sub_amount="0.000000" multiplier="-0.010000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="20.000000" extra_max="1000.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="threadGetReply" amount="2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="threadViewed" amount="1.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="readThread" amount="1.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="createNewPoll" amount="5.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="votePoll" amount="2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="pollGetVote" amount="3.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="threadSticky" amount="10.000000" sub_amount="-10.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="newPost" amount="5.000000" sub_amount="0.000000" multiplier="0.010000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="20.000000" extra_max="1000.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="postDeleted" amount="-5.000000" sub_amount="0.000000" multiplier="-0.010000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="20.000000" extra_max="1000.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="uploadAttachment" amount="4.000000" sub_amount="-4.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="downloadAttachment" amount="2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="attachmentDownloaded" amount="3.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="receivePostLike" amount="5.000000" sub_amount="-5.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="reportPost" amount="5.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="likePost" amount="2.000000" sub_amount="-2.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="postReported" amount="-5.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="receiveConversation" amount="3.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="replyConversation" amount="2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="conversationGetReply" amount="1.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="watchThread" amount="3.000000" sub_amount="-3.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="threadGetWatched" amount="5.000000" sub_amount="-5.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="trophyReward" amount="0.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="dailyReward" amount="5.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="steal" amount="0.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="salary" amount="0.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[null]]></extra_data>
+  </event>
+  <event action_id="paypalPaymentRe" amount="0.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[{"price_type":"","fee":"0","tax":"0"}]]></extra_data>
+  </event>
+  <event action_id="facebookAssociate" amount="8.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="facebookDisassociate" amount="-8.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="twitterAssociate" amount="8.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="twitterDisassociate" amount="-8.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="googleAssociate" amount="8.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="googleDisassociate" amount="-8.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="uploadAvatarRe" amount="-3.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="followRe" amount="-2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="getFollowerRe" amount="-4.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="threadGetWatchedRe" amount="-5.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="uploadAttachmentRe" amount="-4.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="likePostRe" amount="-2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="receivePostLikeRe" amount="-2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="threadStickyRe" amount="-10.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="updateFullProfileRe" amount="-10.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="likeProfilePostRe" amount="-1.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="receiveProfilePostLikeRe" amount="-2.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="createConversationRe" amount="-5.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+  <event action_id="watchThreadRe" amount="-3.000000" sub_amount="0.000000" multiplier="0.000000" sub_multiplier="0.000000" active="1" moderate="0" alert="1" times="0" max_time="0" apply_max="0" extra_min="0.000000" extra_max="0.000000" extra_min_handle="0" target="user">
+    <forums><![CDATA[[]]]></forums>
+    <user_groups><![CDATA[[]]]></user_groups>
+    <extra_data><![CDATA[[]]]></extra_data>
+  </event>
+</brc_events>

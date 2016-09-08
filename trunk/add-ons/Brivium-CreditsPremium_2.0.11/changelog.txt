@@ -1,0 +1,254 @@
+CHANGELOG:
+01/10/2013: Version 1.0.0
+- Initial Release
+
+01/10/2013: Version 1.0.1
+- Increase performance
+- Fixed bug when edit events
+
+07/10/2013: Version 1.1.0
+- Fixed invalid phrase when receive a tranfer.
+- Added edit credits when create user in admin.
+- Added option minimum and maximum amount when purchasing credit.
+- Added permission allows user export their own transactions (with conditions).
+- Added feature send an email after purchased credits using Paypal.
+- Some deep changes to improve performance (very important).
+
+08/10/2013: Version 1.1.1
+- Minor bug fixes.
+
+12/10/2013: Version 1.1.2
+- Minor bug fixes.
+
+14/10/2013: Version 1.1.3
+- Minor bug fixes.
+- Fixed Paypal payment method error.
+- Moved exchange rate (when buy credits via Paypal) option to event (Paypal Payment Reverted or Refunded Payment) setting.
+
+22/11/2013: Version 1.1.4
+- Bug fixes.
+- Fixed error missing 'brc_points' after install.
+- Performance improvement.
+- Hide inactive currency from transaction list.
+
+03/12/2013: Version 1.1.5
+- Bug fixes.
+- Improve paypal purchase process.
+- Fixed edit user credit field.
+
+19/12/2013: Version 1.2.0
+- Supported multiple events.
+- Minor bugs fixes.
+
+28/12/2013: Version 1.3.0
+- Added negative handle for action.
+- Minor bugs fixes.
+
+02/01/2014: Version 1.3.1
+- Fixed error on purchases and refunds credits via Paypal.
+- Fixed error when import from vBulletin.
+- Minor bugs fixes.
+
+08/01/2014: Version 1.4.0
+- Added User Group Promotions for Credits.
+- Minor bugs fixes.
+
+15/01/2014: Version 1.5.0
+- Added feature to export event by addon.
+- Added feature credits statistics now more clearly with stats for alltime, today, action.
+- Added new action Watch Thread and Thread get Watched.
+- Added new permission: view statistic and can view other transactions.
+- Added new admin permission: Manage credits index, Manage transaction, Manage action & event, Manage currencies.
+- Fixed error incorrect value for 'multiplier' field of transaction table.
+- Minor bugs fixes.
+
+21/01/2014: Version 1.5.1
+- Increased length of currency code/symbol to 50 character.
+- Fixed bug on display currency with html entity.
+- Fixed error on invalid mysql query.
+- Fixed bug on display order of currencies.
+
+27/01/2014: Version 1.5.2
+- Fixed some phrases.
+
+07/02/2014: Version 1.5.3
+- Fixed error undefined variable currencies.
+- Supported transfer to multiple receivers.
+- Changed to set negative amount for user by admin.
+- Minor bugs fixes.
+
+19/02/2014: Version 1.5.4
+- Added richest tab for each currency in notable member lists.
+
+26/02/2014: Version 1.6.0
+- Added daily reward event.
+- Added trophy reward event.
+- Added admin permission can change user's credits in admincp page.
+- Changed on currency code to support HTML (You may use image for Currency).
+- Minor bugs fixes.
+
+27/02/2014: Version 1.6.1
+- Fixed error when install.
+
+01/03/2014: Version 1.6.2
+- Fixed error on old MySQL version.
+- Fixed error on display large numbers in Member Lists.
+
+28/03/2014: Version 1.6.3
+- Fixed bug on rewards for register with Facebook, Google, Twitter.
+- Fixed bug on clickable to transfer on top earned statistic.
+- Fixed bug on show active event on front-end statistic.
+- Fixed bug on list currencies on exchange form.
+- Fixed bug on display buy Credits via Paypal.
+- Fixed bug on display Credits on message user info.
+- Performance improvement.
+- Minor bugs fixes.
+
+15/04/2014: Version 1.6.4
+- Removed currency if have no actions on front-end statistics.
+- Added permission can use Credits.
+- Added import Credits function on Rebuild Caches.
+- Minor bugs fixes.
+
+23/04/2014: Version 1.6.5
+- Fixed bug display wrong currency in Front-End statistics.
+- Fixed bug display exchange link in wrapper when member cant exchange.
+- Fixed error undefined
+- Minor bugs fixes.
+
+29/04/2014: Version 1.6.6
+- Fixed bug on display richest tab in Notable Members.
+- Slide list events to each currency.
+- Added can view ranking permission.
+- Minor bugs fixes.
+
+07/05/2014: Version 1.6.7
+- Added remove attachment event.
+- Fixed error on birthday event.
+- Fixed bug on check exclude forums and usergroups for event.
+- Fixed bug on trigger attachment downloads event with exclude node.
+- Fixed missing some phrases.
+- Minor bug fixes.
+
+14/06/2014: Version 1.6.8
+- Fixed bug on upgrade from Credit Lite.
+- Changed to display List Actions page without Development Mode enable.
+- Minor bug fixes.
+
+02/09/2014: Version 1.6.9
+- Fixed error permission on alert preferences page.
+- Fixed error on trigger post new reply event.
+- Fixed error on complete profile update event.
+- Minor bug fixes.
+
+19/09/2014: Version 1.6.10
+- Added Steal Credits action and can Steal Credits / Steal Credits Anonymous permission.
+- Fixed event register not trigger with some addons.
+- Minor bug fixes.
+- Update addon's library to fit with new privacy policies at http://brivium.com/privacy-policy/
+
+18/11/2014: Version 1.7.0
+- Added salary action.
+- Added front-end edit user's credits (with moderator permission and moderator log).
+- Fixed bug with unread alert.
+- Fixed bug on withdraw event.
+- Fixed bug on exchange credits event.
+- Fixed bug on transfer credits for non-receiver.
+- Minor bug fixes.
+
+25/12/2014: Version 1.7.1
+- Added withdraw currency and withdraw exchange rate options.
+- Added pending withdraw number at moderator bar.
+- Minor bug fixes.
+
+24/03/2105: Version 1.7.2
+- Fixed bug with credit phantom alert.
+- Added social accounts associate actions for trigger credit.
+- Added Credit's currency for user title ladder.
+- Minor bug fixes & improvements.
+
+26/03/2105: Version 1.7.3
+- Improved Exchange event performance.
+- Fixed bug on Registration event.
+- Minor bug fixes & improvements.
+
+08/05/2105: Version 1.7.4
+- Performance & stability improvements.
+- Minor bug fixes.
+
+19/05/2015: Version 2.0.0 Beta 1
+- Actions and events system improvements.
+- Separated Actions system from Credit's core code for increasing perfomance.
+- Easy enable/disable credit's actions.
+- Standardized PHP, JS code.
+- Easy create credit action with action handler.
+- Payment method improvements by combine into one page.
+- Payment method now supports purchasing Credits package.
+- Added option for pending transaction counter displayed on moderator bar.
+- Bug fixes and perfomance improvements.
+
+NOTES: A beta release is intended for testing only, and is not recommended for production use. It contains known bugs and incomplete functionality. There is no way to downgrade a Credits Premium installation so if you upgrade your live installation, there's no going back. If you choose to run beta software, it is your responsibility to ensure that you make a backup of your database.
+
+09/06/2015: Version 2.0.0 Beta 2
+- Fixed purchase credit methods.
+- Fixed credit statistics updater.
+- Bring view action content to transaction lists.
+- Rebuild processes while update multiple events.
+- Added view for single transaction at front-end.
+- Added transaction completed alert for moderated transaction.
+- Added import credit from [AD] Credits.
+- Bug fixes and perfomance improvements.
+
+NOTES: A beta release is intended for testing only, and is not recommended for production use. It contains known bugs and incomplete functionality. There is no way to downgrade a Credits Premium installation so if you upgrade your live installation, there's no going back. If you choose to run beta software, it is your responsibility to ensure that you make a backup of your database.
+
+13/08/2015: Version 2.0.0
+This is stable version with many bug fixes and compatible with XenForo 1.5
+
+19/08/2015: Version 2.0.1
+- Added sensitive data for withdraw's action and permission for moderator.
+- Bug fixes and perfomance improvements.
+
+21/09/2015: Version 2.0.2
+- Fixed permissions error.
+- Bug fixes and perfomance improvements.
+
+07/11/2015: Version 2.0.3
+- Minor bug fixes.
+
+24/11/2015: Version 2.0.4
+- Fixed bug not allow amount is fractional number from 0 to 1 when exchange, withdraw.
+- Display amount hint while exchanging currency.
+- Minor bug fixes.
+
+07/12/2015: Version 2.0.5
+- XenForo 1.5.3 Compability.
+- Minor bug fixes.
+
+16/01/2016: Version 2.0.6
+- PHP 7 Compatibility.
+- Minor bug fixes.
+
+18/02/2016: Version 2.0.7
+- Added top user credits statistics on back-end.
+- Fixed bug on transfer credits permission for receiver.
+- Minor bug fixes.
+
+07/04/2016: Version 2.0.8
+- Fixed can view statistic and can view credit's rank bug.
+- Fixed bug trigger event in period of time.
+- Fixed bug below minimum handling error.
+- Minor bug fixes.
+
+16/06/2016: Version 2.0.9
+- Fixed error on float amount for Paypal payment (eg. $1.99)
+- Minor bug fixes.
+
+29/08/2016: Version 2.0.10
+- Fixed error currency change not working at credit payment page.
+- Added option for sanbox mode on Credit purchasing.
+- Minor bug fixes.
+
+06/09/2016: Version 2.0.11
+- Fixed bug on paypal payment.
+- Fixed error on all transactions deletion.
+- Minor bug fixes.
