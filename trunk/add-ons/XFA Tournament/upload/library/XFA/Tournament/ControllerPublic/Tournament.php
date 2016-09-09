@@ -360,7 +360,7 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 			$thread = false;
 		}
 		$teams = null;
-		if ($tournament["team_mode"] = 1)
+		if ($tournament["team_mode"] == 1)
 		{
 			$visitor = XenForo_Visitor::getInstance();
 			$teams =  $this->getModelFromCache('Nobita_Teams_Model_Member')->getAllTeamsUserJoined($visitor['user_id']);
