@@ -42,7 +42,10 @@ class XFA_Tournament_DataWriter_Tournament extends XenForo_DataWriter
 				'winner_username'           => array('type' => self::TYPE_STRING, 'default' => '', 'maxLength' => 50),
 				'discussion_thread_id'      => array('type' => self::TYPE_UINT, 'default' => 0),
 				'rules'                     => array('type' => self::TYPE_STRING, 'default' => ''),
-				'team_mode'                     => array('type' => self::TYPE_UINT, 'default' => '')
+				'team_mode'                 => array('type' => self::TYPE_UINT, 'default' => 0),
+				'aplace1'                   => array('type' => self::TYPE_UINT, 'default' => 0),
+				'aplace2'                   => array('type' => self::TYPE_UINT, 'default' => 0),
+				'aplace3'                   => array('type' => self::TYPE_UINT, 'default' => 0)
 			)
 		);
     }

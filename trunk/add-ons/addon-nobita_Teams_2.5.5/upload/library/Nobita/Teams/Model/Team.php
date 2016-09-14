@@ -1816,6 +1816,35 @@ class Nobita_Teams_Model_Team extends Nobita_Teams_Model_Abstract
 		}
 	}
 
+	public function massAlertById($teamId, $message = '', array $viewingUser = null)
+	{
+		$team = $this->getTeamById($teamId);
+		$this->standardizeViewingUserReference($viewingUser);
+		if (!$viewingUser['user_id'] || empty($message))
+		{
+			return false;
+		}
+
+		$users = $this->_getMemberModel()->getMembersByTeamId($team['team_id'], array(
+			'alert' => 1,
+			'member_state' => 'accept'
+		));
+
+		foreach ($users as $user)
+		{
+			if ($viewingUser['user_id'] == $user['user_id'])
+			{
+				continue;
+			}
+
+			XenForo_Model_Alert::alert($user['user_id'],
+				$viewingUser['user_id'], $viewingUser['username'],
+				'team', $team['team_id'],
+				'mass_alert', array('alert_message' => $message)
+			);
+		}
+	}
+
 	public function logTeamView($teamId)
 	{
 		$this->_getDb()->query('

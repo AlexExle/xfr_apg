@@ -458,8 +458,31 @@ class XFA_Tournament_Model_Tournament extends XenForo_Model
 			$tournament['user_id'] == $viewingUser['user_id']
 			&& XenForo_Permission::hasPermission($viewingUser['permissions'], 'xfa_tourn', 'canDeleteBySelf')
 		);
-	}  
-    
+	}
+
+	public function featToPermission(array $tournament, $permission, array $viewingUser = null)
+	{
+		//canCreate
+		$this->standardizeViewingUserReference($viewingUser);
+
+		/* No user, no permission */
+		if (!$viewingUser['user_id'])
+		{
+			return false;
+		}
+
+		/* Check if can edit any */
+		if (XenForo_Permission::hasPermission($viewingUser['permissions'], 'xfa_tourn', $permission))
+		{
+			return true;
+		}
+
+		/* Check if can edit self and owner */
+		return (
+			$tournament['user_id'] == $viewingUser['user_id']
+		);
+	}
+
 	public function canManage(array $tournament, array $category, &$errorPhraseKey = '', array $viewingUser = null)
 	{
 		$this->standardizeViewingUserReference($viewingUser);
@@ -835,31 +858,105 @@ class XFA_Tournament_Model_Tournament extends XenForo_Model
           
 		foreach ($participants AS $user)
 		{
-            if (XenForo_Model_Alert::userReceivesAlert($user, 'xfa_tourn', 'scores_update'))    		
-            {
-    			XenForo_Model_Alert::alert(
-    				$user['user_id'],
-    				$visitor['user_id'],
-    				$visitor['username'],
-    				'xfa_tourn',
-    				$tournament['tournament_id'],
-    				'scores_update'
-    			);
+			if ($tournament['team_mode'] == 0) {
+				if (XenForo_Model_Alert::userReceivesAlert($user, 'xfa_tourn', 'scores_update')) {
+					XenForo_Model_Alert::alert(
+						$user['user_id'],
+						$visitor['user_id'],
+						$visitor['username'],
+						'xfa_tourn',
+						$tournament['tournament_id'],
+						'scores_update'
+					);
+				}
 			}
-		}         
-        
-        if ($winner_id != 0)
-        {
+			else{
+				$teamModel = $this->getModelFromCache('Nobita_Teams_Model_Team');
+				$teamModel->massAlertById($user["team_id"], 'Результаты чемпионата '.$tournament['title'].' обновились ' );
+			}
+		}
+
+		$winner_id = $this -> GetWinnerId($tournament, $inputBracket['winners'][0]["teamName"]);
+
+        if ($winner_id != 0 && $tournament['winner_id'] != $winner_id) {
+			$rewards = array(1 => $tournament['aplace1'], 2 => $tournament['aplace2'],3 => $tournament['aplace3']);
+
+			/*if ($tournament['team_mode'] == 0) {
+
+				$userModel = $this->getModelFromCache('XenForo_Model_User');
+				$user = $userModel->getUserById($winner_id);
+				$udw = XenForo_DataWriter::create('XenForo_DataWriter_User');
+				$udw->setExistingData($user['user_id']);
+				$udw->set('apeigold', $user["apeigold"] + $reward1);
+				$udw->save();
+			} else {
+				$teamModel = $this->getModelFromCache('Nobita_Teams_Model_Team');
+				$team = $teamModel->getTeamById($winner_id);
+				$teamMembersModel = $this->getModelFromCache('Nobita_Teams_Model_Member');
+				$users = $teamMembersModel->getAllMembersInTeam($winner_id);
+				foreach ($users as $us) {
+					$userModel = $this->getModelFromCache('XenForo_Model_User');
+					$user2 = $userModel->getUserById($us['user_id']);
+					$udw = XenForo_DataWriter::create('XenForo_DataWriter_User');
+					$udw->setExistingData($user2['user_id']);
+					$udw->set('apeigold', $user2["apeigold"] + $reward1);
+					$udw->save();
+				}
+			}*/
+			$inputBracket['winners'];
+			foreach ($inputBracket['winners'] as $winner) {
+				if ($winner["place"] < 4) {
+					if ($tournament['team_mode'] == 0) {
+						$userModel = $this->getModelFromCache('XenForo_Model_User');
+						$user = $userModel->getUserByName($winner["teamName"]);
+						$udw = XenForo_DataWriter::create('XenForo_DataWriter_User');
+						$udw->setExistingData($user['user_id']);
+						$udw->set('apeigold', $user["apeigold"] + $rewards[$winner["place"]]);
+						$udw->save();
+						XenForo_Error::logError('User '.$user['user_id'].'получил '.$rewards[$winner["place"]].' apeigold за '.$winner["place"].'место в турнире '.$tournament['title']);
+					} else {
+						$teamModel = $this->getModelFromCache('Nobita_Teams_Model_Team');
+						$teams = $teamModel->getTeamsByTitles(array(0 => $winner["teamName"]));
+						$team = array_shift($teams);
+						$teamMembersModel = $this->getModelFromCache('Nobita_Teams_Model_Member');
+						$users = $teamMembersModel->getAllMembersInTeam($team["team_id"]);
+						foreach ($users as $us) {
+							$userModel = $this->getModelFromCache('XenForo_Model_User');
+							$user2 = $userModel->getUserById($us['user_id']);
+							$udw = XenForo_DataWriter::create('XenForo_DataWriter_User');
+							$udw->setExistingData($user2['user_id']);
+							$udw->set('apeigold', $user2["apeigold"] + $rewards[$winner["place"]]);
+							$udw->save();
+							XenForo_Error::logError('User '.$user2['user_id'].'получил '.$rewards[$winner["place"]].' apeigold за '.$winner["place"].'место в турнире '.$tournament['title']);
+						}
+					}
+				}
+			}
+
+
     		$dw = XenForo_DataWriter::create('XFA_Tournament_DataWriter_Tournament');
-    
-    		$visitor = XenForo_Visitor::getInstance();
+
     		$dw->setExistingData($tournament['tournament_id']);
     		$dw->set('winner_id', $winner_id);
     		$dw->set('winner_username', $winner_username);
-    		$dw->save(); 
+    		$dw->save();
         }
     }
-    
+
+	private function GetWinnerId($tournament, $winnerName)
+	{
+		if ($tournament['team_mode'] == 0) {
+			$userModel = $this->getModelFromCache('XenForo_Model_User');
+			return $userModel->getUserByName($winnerName)["user_id"];
+		}
+		else{
+			$teamModel = $this->getModelFromCache('Nobita_Teams_Model_Team');
+			$teams = $teamModel->getTeamsByTitles(array(0 => $winnerName));
+		    return  array_shift($teams)["team_id"];
+		}
+	}
+
+
     private static function sortRoundRobinTournamentTeams($a, $b)
     {
         /* Check by points first */

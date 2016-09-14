@@ -255,7 +255,10 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 			'private'                   => XenForo_Input::UINT,	
 			'automatic_generation'      => XenForo_Input::UINT,
 			'third_place'               => XenForo_Input::UINT,
-			'team_mode'                 => XenForo_Input::UINT
+			'team_mode'                 => XenForo_Input::UINT,
+			'aplace1'                   => XenForo_Input::UINT,
+			'aplace2'                   => XenForo_Input::UINT,
+			'aplace3'                   => XenForo_Input::UINT
 		));
 		$tournamentData['description']  = $this->getHelper('Editor')->getMessageText('description', $this->_input);
 		$tournamentData['description']  = XenForo_Helper_String::autoLinkBbCode($tournamentData['description']);
@@ -373,7 +376,6 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 			}
 				//unset()
 		}
-		XenForo_Error::logError(json_encode($tournament["isRegistered"]));
     	
 		$viewParams = array(
     		'selectedTab'               => 'content',
@@ -864,7 +866,7 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 
     	$tournament = $this->_getTournamentHelper()->getTournamentOrError(null, array());
         $category   = $this->_getTournamentHelper()->getCategoryOrError($tournament['tournament_category_id'], array());
-    	
+		$bracketData = json_decode($tournament['bracket'], true);
     	/* Check if user can manage */
     	if (!($tournamentModel->canManage($tournament, $category) && $tournament['bracket']))
     	{
@@ -876,7 +878,10 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
     	{
 			throw $this->getNoPermissionResponseException();
         }
-    	
+    	if ($tournament['winner_id'] == 0 && isset($bracketData['winners']) && !$tournamentModel->featToPermission($tournament, "canCreate"))
+		{
+			throw $this->getErrorOrNoPermissionResponseException('Только создатель турнира может менять победителя', true);
+		}
     	/* Get results */
     	if ($tournament['type'] == 'round_robin')
     	{
@@ -909,12 +914,14 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
         else
         {
             $results = $this->_input->filterSingle('results', XenForo_Input::ARRAY_SIMPLE);
-
+			$winners = $this->_input->filterSingle('place', XenForo_Input::ARRAY_SIMPLE);
+			XenForo_Error::logError('foroforo'.json_encode($winners));
         	/* Get current bracket data */
-        	$bracketData = json_decode($tournament['bracket'], true);
+
         	
         	/* Merge new results to bracket and save tournament */
         	$bracketData['results'] = $results;
+			$bracketData['winners'] = $winners;
         }
 
         $tournamentModel->updateTournament($tournament, $bracketData);
@@ -1119,7 +1126,8 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 
 				if ($tournament['team_mode'] == 1){
 					$teamModel = $this->getModelFromCache('Nobita_Teams_Model_Team');
-					$teamModel->massAlert($part, 'Your team added to the tournament ' . $tournament['title']);
+					$team = $teamModel->getTeamById($part[$participantIdField]);
+					$teamModel->massAlert($team, 'Ваша команда зарегистрирована на участие в чемпионате ' . $tournament['title']);
 				}
 				else {
 					XenForo_Model_Alert::alert(
