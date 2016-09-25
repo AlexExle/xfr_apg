@@ -36,7 +36,7 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 		$conditions  = array();
 
 		/* Get order and direction if provided or set default (necessary for the tabs) */
-		$order = $this->_input->filterSingle('order', XenForo_Input::STRING, array('default' => 'free_slots'));
+		$order = $this->_input->filterSingle('order', XenForo_Input::STRING, array('default' => 'last_update'));
 
         $fetchOptions = array(
             'join'      => XFA_Tournament_Model_Tournament::FETCH_USER | XFA_Tournament_Model_Tournament::FETCH_CATEGORY | XFA_Tournament_Model_Tournament::FETCH_WINNER,
