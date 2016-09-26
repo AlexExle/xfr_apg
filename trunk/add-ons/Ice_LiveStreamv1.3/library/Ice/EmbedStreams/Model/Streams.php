@@ -42,6 +42,10 @@ class Ice_EmbedStreams_Model_Streams extends Xenforo_Model
 							"verify_peer"=>false,
 							"verify_peer_name"=>false,
 						),
+						'http'=>array(
+							'method'=>"GET",
+							'header'=>"Client-ID: "."gs9mpj1wgah9c2iqhb3wkfr909ucmq5\r\n"
+						)
 					);
 					$url = 'https://api.twitch.tv/kraken/streams/'.$stream['stream_username'];
 					$content = file_get_contents($url, false, stream_context_create($arrContextOptions));

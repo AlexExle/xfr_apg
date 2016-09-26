@@ -71,7 +71,7 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 			$teamTopWinners = $tournamentModel->getTopTeamWinners(XenForo_Application::get('options')->xfa_tourn_nbTopWinners, null);
 		}
 		
-		$pageNavParams = array('order' => ($order != 'last_update' ? $order : false));
+		$pageNavParams = array('order' => ($order != 'free_slots' ? $order : false));
 
 		$viewParams = array(
 			'categories'        => $categories,
@@ -139,7 +139,7 @@ class XFA_Tournament_ControllerPublic_Tournament extends XenForo_ControllerPubli
 		}
 
 
-		$pageNavParams = array('order' => ($order != 'last_update' ? $order : false));
+		$pageNavParams = array('order' => ($order != 'free_slots' ? $order : false));
 		
 		$viewParams = array(
     		'category'              => $category,
