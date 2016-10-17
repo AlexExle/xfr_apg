@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="SiropuChat" widget_title="SiropuChat (by Siropu)" widget_desc="Displays a widget for SiropuChat" widget_string="1" widget_version="1" widget_url="https://xenforo.com/community/resources/chat-by-siropu.4309/" widget_install_class="EWRporta2_Widget_Install_SiropuChat" widget_install_method="installCode" widget_uninstall_class="" widget_uninstall_method="" ctime="">
+  <admin_templates/>
+  <listeners/>
+  <options>
+    <option option_id="siropuchat_room" edit_format="callback" data_type="unsigned_integer" display_order="1">
+      <default_value>0</default_value>
+      <edit_format_params>EWRporta2_Widget_Option_SiropuChat::renderRoomSelect</edit_format_params>
+      <sub_options></sub_options>
+      <title>Room</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_SiropuChat"><![CDATA[<xen:if is="{$wScale} == 'full'">
+	<xen:callback class="Siropu_Chat_Callback" method="getChat" params="{xen:array 'room_id={$wOptions.siropuchat_room}'}"></xen:callback>
+<xen:else/>
+	<xen:callback class="Siropu_Chat_Callback" method="getChat" params="{xen:array 'room_id={$wOptions.siropuchat_room}', 'sidebar=1'}"></xen:callback>
+</xen:if>]]></template>
+  </templates>
+</widget>

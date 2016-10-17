@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="TagCloud" widget_title="Tag Cloud" widget_desc="Displays a text-based tag cloud for XenForo tags" widget_string="1" widget_version="1" widget_url="" widget_install_class="" widget_install_method="" widget_uninstall_class="" widget_uninstall_method="" ctime="">
+  <admin_templates/>
+  <listeners/>
+  <options/>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_TagCloud"><![CDATA[<xen:require css="tag.css" />
+
+<div class="section widget_{$wWidget}" id="widget_{$wWidlink}">
+	<div class="secondaryContent">
+		<h3>{$wTitle}</h3>
+		
+		<ul class="tagCloud">
+		<xen:foreach loop="$wCached.tagCloud" key="$tagId" value="$tag">
+			<li><a href="{xen:link tags, $tag}" class="tagCloudTag tagCloudTag{$wCached.tagCloudLevels.{$tagId}}">{$tag.tag}</a></li>
+		</xen:foreach>
+		</ul>
+	</div>
+</div>]]></template>
+  </templates>
+</widget>

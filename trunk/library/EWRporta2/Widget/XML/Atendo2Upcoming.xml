@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="Atendo2Upcoming" widget_title="XenAtendo 2: Upcoming Events" widget_desc="Displays upcoming events from XenAtendo" widget_string="1" widget_version="1" widget_url="https://xenforo.com/community/resources/8wayrun-com-xenatendo-2-events-pro.4557/" widget_install_class="EWRporta2_Widget_Install_Atendo2" widget_install_method="installCode" widget_uninstall_class="" widget_uninstall_method="" ctime="+1 hours">
+  <admin_templates/>
+  <listeners/>
+  <options>
+    <option option_id="atendo2upcoming_range" edit_format="spinbox" data_type="unsigned_numeric" display_order="1">
+      <default_value>7</default_value>
+      <edit_format_params>min=1
+step=7</edit_format_params>
+      <sub_options></sub_options>
+      <title>Range</title>
+      <explain><![CDATA[Fetch for upcoming events within a certain number of days.]]></explain>
+    </option>
+    <option option_id="atendo2upcoming_limit" edit_format="spinbox" data_type="unsigned_integer" display_order="2">
+      <default_value>5</default_value>
+      <edit_format_params>min=1</edit_format_params>
+      <sub_options></sub_options>
+      <title>Limit</title>
+      <explain><![CDATA[The maximum number of upcoming events to display.]]></explain>
+    </option>
+    <option option_id="atendo2upcoming_filters" edit_format="onoff" data_type="boolean" display_order="3">
+      <default_value>0</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <title>Respect User Filters</title>
+      <explain><![CDATA[Setting this option will bypass caching if the user has filter settings.]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_Atendo2Upcoming"><![CDATA[<xen:if hascontent="true">
+	<xen:require css="EWRwidget_Atendo2Upcoming.css" />
+	<xen:require css="profile_post_list_simple.css" />
+	
+	<div class="section widget_{$wWidget}" id="widget_{$wWidlink}">
+		<div class="secondaryContent">
+			<h3>{$wTitle}</h3>
+			
+			<xen:include template="EWRatendo2_Filters">
+				<xen:map from="$wOptions.params" to="$params" />
+			</xen:include>
+			
+			<ul>
+				<xen:contentcheck>
+				<xen:foreach loop="$wUncached" value="$event">
+					<li class="profilePostListItem">
+						<xen:avatar user="$event" size="s" img="true" />
+		
+						<div class="messageInfo">
+							<div class="eventName"><a href="{xen:link 'calendar/event', $event, 'id={$event.occur_id}'}"><b>{$event.event_title}</b></a></div>
+							<i><xen:if is="{$event.event_address}">{$event.event_address}<xen:else/>{$event.event_location}</xen:if></i>
+							<div class="eventTime muted Tooltip" title="{$event.adjusted_start} {$event.adjusted_tzone}">{$event.formatted_start} {$event.formatted_tzone}</div>
+						</div>
+					</li>
+				</xen:foreach>
+				</xen:contentcheck>
+			</ul>
+		</div>
+	</div>
+</xen:if>]]></template>
+    <template title="EWRwidget_Atendo2Upcoming.css"><![CDATA[.filterNotice { text-align: center; font-size: 11px; margin: 10px; }]]></template>
+  </templates>
+</widget>

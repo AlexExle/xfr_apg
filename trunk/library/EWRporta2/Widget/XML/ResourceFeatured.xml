@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="ResourceFeatured" widget_title="Resources: Featured" widget_desc="Displays a resource widget from XFRM" widget_string="1" widget_version="1" widget_url="" widget_install_class="EWRporta2_Widget_Install_Resource" widget_install_method="installCode" widget_uninstall_class="" widget_uninstall_method="" ctime="+1 hours">
+  <admin_templates/>
+  <listeners/>
+  <options>
+    <option option_id="resourcefeatured_limit" edit_format="spinbox" data_type="unsigned_integer" display_order="1">
+      <default_value>5</default_value>
+      <edit_format_params>min=1
+step=5</edit_format_params>
+      <sub_options></sub_options>
+      <title>Resource Limit</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+    <option option_id="resourcefeatured_order" edit_format="select" data_type="string" display_order="2">
+      <default_value>random</default_value>
+      <edit_format_params>random=RANDOM
+last_update={xen:phrase last_update}
+resource_date={xen:phrase submission_date}
+rating_avg={xen:phrase rating} (Average)
+rating_weighted={xen:phrase rating} (Weighted)
+download_count={xen:phrase downloads}</edit_format_params>
+      <sub_options></sub_options>
+      <title>Sort Order (DESC)</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_ResourceFeatured"><![CDATA[<xen:if is="{$wUncached}">
+	<xen:require css="EWRwidget_ResourceFeatured.css" />
+	
+	<div class="section widget_{$wWidget}" id="widget_{$wWidlink}">
+		<div class="secondaryContent">
+			<h3>{$wTitle}</h3>
+			
+			<xen:include template="resource_featured_list">
+				<xen:map from="$wUncached" to="$featuredResources" />
+			</xen:include>
+		</div>
+	</div>
+</xen:if>]]></template>
+    <template title="EWRwidget_ResourceFeatured.css"><![CDATA[.widget_ResourceFeatured .featuredResourceList { height: auto; }]]></template>
+  </templates>
+</widget>

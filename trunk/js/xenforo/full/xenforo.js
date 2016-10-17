@@ -8402,10 +8402,6 @@ if ($.tools === undefined) console.error('jQuery Tools is not loaded.');
 			this.$input = $input;
 
 			this.url = $input.data('acurl') || XenForo.AutoComplete.getDefaultUrl();
-			if (this.$input.hasClass("TeamSelect"))
-			{
-				this.url = 'index.php?groups/find&_xfResponseType=json';
-			}
 			this.extraFields = $input.data('acextrafields');
 
 			var options = {
@@ -8682,8 +8678,12 @@ if ($.tools === undefined) console.error('jQuery Tools is not loaded.');
 			{
 				XenForo.AutoComplete.defaultUrl = 'index.php?members/find&_xfResponseType=json';
 			}
-
+			if (this.$input.hasClass("TeamSelect"))
+			{
+				XenForo.AutoComplete.defaultUrl = 'index.php?groups/find&_xfResponseType=json';
+			}
 		};
+
 		return XenForo.AutoComplete.defaultUrl;
 	};
 	XenForo.AutoComplete.defaultUrl = null;

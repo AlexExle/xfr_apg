@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="RandomQuote" widget_title="Random Quote" widget_desc="Displays a block with a random quote" widget_string="1" widget_version="1" widget_url="" widget_install_class="" widget_install_method="" widget_uninstall_class="" widget_uninstall_method="" ctime="">
+  <admin_templates>
+    <template title="EWRwidget_RandomQuote_Option"><![CDATA[<xen:require js="js/xenforo/options_censor.js" />
+
+<xen:controlunit label="{$preparedOption.title}" hint="{$preparedOption.hint}">
+	<xen:explain>{xen:raw $preparedOption.explain}</xen:explain>
+	<xen:html>
+		<ul style="text-align: right;">
+			<xen:foreach loop="$quotes" key="$counter" value="$quote">
+			<li>
+				<xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$counter}][quote]" value="{$quote.quote}" placeholder="{xen:phrase quote}" />
+				— <xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$counter}][author]" value="{$quote.author}" placeholder="{xen:phrase author}" size="50" />
+			</li>
+			</xen:foreach>
+		
+			<li class="CensorWordOptionListener">
+				<xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$nextCounter}][quote]" value="" placeholder="{xen:phrase quote}" />
+				— <xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$nextCounter}][author]" value="" placeholder="{xen:phrase author}" size="50" />
+			</li>
+		</ul>
+		
+		<input type="hidden" name="{$listedFieldName}" value="{$preparedOption.option_id}" />
+		{xen:raw $editLink}
+	</xen:html>
+</xen:controlunit>]]></template>
+  </admin_templates>
+  <listeners/>
+  <options>
+    <option option_id="randomquote_quote" edit_format="callback" data_type="array" display_order="1" validation_class="EWRporta2_Widget_Option_RandomQuote" validation_method="verifyOption">
+      <default_value></default_value>
+      <edit_format_params>EWRporta2_Widget_Option_RandomQuote::renderOption</edit_format_params>
+      <sub_options>*</sub_options>
+      <title>Quotes</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_RandomQuote"><![CDATA[<xen:require css="EWRwidget_RandomQuote.css" />
+
+<div class="{xen:if "{$wScale} != 'full'", 'section', 'sectionMain'} widget_{$wWidget}" id="widget_{$wWidlink}">
+	<div class="secondaryContent">
+		<xen:if is="{$wScale} != 'full'"><h3>{$wTitle}</h3></xen:if>
+
+		<div class="quoteQuote">{$wCached.quote}</div>
+		<div class="quoteAuthor">— {$wCached.author}</div>
+	</div>
+</div>]]></template>
+    <template title="EWRwidget_RandomQuote.css"><![CDATA[.widget_RandomQuote .quoteQuote { text-align: center; padding: 20px 0 0; }
+.widget_RandomQuote .quoteAuthor { text-align: right; padding: 5px 15% 20px 0; }
+
+.sectionMain.widget_RandomQuote .quoteQuote { font-size: 2em; }
+.section.widget_RandomQuote .quoteQuote { font-size: 1.5em; }]]></template>
+  </templates>
+</widget>

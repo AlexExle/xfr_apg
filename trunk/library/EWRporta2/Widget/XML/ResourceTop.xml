@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="ResourceTop" widget_title="Resources: Top List" widget_desc="Displays a resource widget from XFRM" widget_string="1" widget_version="1" widget_url="" widget_install_class="EWRporta2_Widget_Install_Resource" widget_install_method="installCode" widget_uninstall_class="" widget_uninstall_method="" ctime="+1 hours">
+  <admin_templates/>
+  <listeners/>
+  <options>
+    <option option_id="resourcetop_limit" edit_format="spinbox" data_type="unsigned_integer" display_order="1">
+      <default_value>5</default_value>
+      <edit_format_params>min=1
+step=5</edit_format_params>
+      <sub_options></sub_options>
+      <title>Resource Limit</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+    <option option_id="resourcetop_order" edit_format="select" data_type="string" display_order="2">
+      <default_value>rating_weighted</default_value>
+      <edit_format_params>last_update={xen:phrase last_update}
+resource_date={xen:phrase submission_date}
+rating_avg={xen:phrase rating} (Average)
+rating_weighted={xen:phrase rating} (Weighted)
+download_count={xen:phrase downloads}</edit_format_params>
+      <sub_options></sub_options>
+      <title>Sort Order (DESC)</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+    <option option_id="resourcetop_category" edit_format="callback" data_type="unsigned_integer" display_order="3">
+      <default_value>0</default_value>
+      <edit_format_params>EWRporta2_Widget_Option_ResourceTop::renderCategorySelect</edit_format_params>
+      <sub_options></sub_options>
+      <title>Restrict by Category</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_ResourceTop"><![CDATA[<xen:if is="{$wUncached}">
+	<div class="section miniResourceList widget_{$wWidget}" id="widget_{$wWidlink}">
+		<div class="secondaryContent">
+			<h3>{$wTitle}</h3>
+			
+			<xen:include template="resource_list_mini">
+				<xen:map from="$wUncached" to="$resources" />
+			</xen:include>
+		</div>
+	</div>
+</xen:if>]]></template>
+  </templates>
+</widget>

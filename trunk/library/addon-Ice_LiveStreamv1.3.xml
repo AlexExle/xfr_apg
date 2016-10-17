@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="Ice_LiveStream" title="[Ice] LiveStream" version_string="1.3" version_id="20" url="" install_callback_class="Ice_EmbedStreams_Install" install_callback_method="install" uninstall_callback_class="Ice_EmbedStreams_Install" uninstall_callback_method="uninstall">
+  <admin_navigation>
+    <navigation navigation_id="Ice_LiveStreams_Edit" parent_navigation_id="Ice_Streams" display_order="1" link="livestreams" admin_permission_id="manageStreams" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="Ice_Streams" parent_navigation_id="applications" display_order="99999" link="" admin_permission_id="manageStreams" debug_only="0" hide_no_children="1"/>
+    <navigation navigation_id="ice_livestreams_options" parent_navigation_id="Ice_Streams" display_order="2" link="options/list/Ice_LiveStreams" admin_permission_id="manageStreams" debug_only="0" hide_no_children="0"/>
+  </admin_navigation>
+  <admin_permissions>
+    <admin_permission admin_permission_id="manageStreams" display_order="99999"/>
+  </admin_permissions>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="ice_livestreams_delete"><![CDATA[<xen:title>Delete: {$stream.stream_username}</xen:title>
+<xen:h1>{xen:phrase ice_livestream_confirmdelete}</xen:h1>
+
+<xen:require css="delete_confirmation.css" />
+
+<xen:form action="{xen:adminlink 'livestreams/delete', $stream}" class="deleteConfirmForm formOverlay">
+	<p>{xen:phrase ice_livestream_areyousure}</p>
+	<strong><a href="{xen:adminlink 'livestreams/edit', $stream}">{$stream.stream_username} by {$stream.username}</a></strong>
+	<xen:submitunit save="{xen:phrase delete}" />
+	<input type="hidden" name="_xfConfirm" value="1" />
+</xen:form>]]></template>
+    <template title="ice_livestreams_editstream"><![CDATA[<xen:if is="{$title}=='create'">
+	<xen:title>{xen:phrase ice_livestream_addnew}</xen:title>
+	<xen:else />
+	<xen:title>{xen:phrase ice_livestream_edit}</xen:title>
+</xen:if>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:adminlink 'livestreams'}">{xen:phrase ice_livestream_livestreams}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:adminlink 'livestreams/create'}">{xen:phrase ice_livestream_manage}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:form action="{xen:adminlink 'livestreams/save', $stream}">
+	<xen:textboxunit label="{xen:phrase ice_livestream_xenforousername}:" 
+			name="username" 
+			value="{$stream.username}"
+			 inputclass="quickSearchText AutoComplete AcSingle"/>
+		
+	<xen:selectunit label="{xen:phrase ice_livestream_streamtype}:" id="streamType" name="stream_type" value="{$stream.stream_type}">
+		<xen:options source="$streamOptions" />
+	</xen:selectunit>
+	
+	<script>
+		$(function()
+			{
+				var e = function(){
+					if($('#streamType').val()==1){
+						$("label[for='stream_username']").html('{xen:phrase ice_livestream_streamuserid}:');
+					}else{
+						$("label[for='stream_username']").html('{xen:phrase ice_livestream_streamusername}:');
+					}
+				};
+				
+				$('#streamType').bind('change', e);
+				e();
+		});
+	</script>
+	
+	<xen:textboxunit label="{xen:phrase ice_livestream_streamusername}:" 
+			name="stream_username" id="stream_username"
+			value="{$stream.stream_username}"/>
+	
+	<xen:spinboxunit label="{xen:phrase display_order}" 
+		value="{$stream.display_order}"
+		name="display_order" />
+	
+	<xen:submitunit save="{xen:phrase ice_livestream_save}">
+		<xen:if is="{$stream.stream_id}">
+			<input type="button" value="{xen:phrase ice_livestream_deletestream}..." accesskey="d" class="button OverlayTrigger"
+				data-href="{xen:adminlink 'livestreams/delete', $stream}" />
+		</xen:if>
+	</xen:submitunit>
+	
+</xen:form>]]></template>
+    <template title="ice_livestreams_index"><![CDATA[<xen:title>{xen:phrase ice_livestream_administrate}</xen:title>
+
+<xen:topctrl>
+	<a href="{xen:adminlink 'livestreams/create'}" class="button">+ {xen:phrase ice_livestream_addstream}</a>
+</xen:topctrl>
+
+<xen:require css="filter_list.css" />
+<xen:require js="js/xenforo/filter_list.js" />
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:adminlink 'livestreams'}">{xen:phrase ice_livestream_livestreams}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:adminlink 'livestreams'}">{xen:phrase ice_livestreams_editstream}</xen:breadcrumb>
+</xen:navigation>
+
+<xen:form action="{xen:adminlink ''}" class="section">
+
+	<h2 class="subHeading">
+		<xen:include template="filter_list_controls" />
+		{xen:phrase ice_livestream_streamplain}
+	</h2>
+
+	<ol class="FilterList">
+		<xen:foreach loop="$streams" value="$stream">
+			<xen:listitem id="{$stream.stream_id}"
+				label="{$stream.stream_username} by {$stream.username}"
+				href="{xen:adminlink 'livestreams/edit', $stream}"
+				delete="{xen:adminlink 'livestreams/delete', $stream}"
+				deletehint="{xen:phrase delete}">
+				<xen:html>
+					<a class="secondaryContent" href="{xen:adminlink 'livestreams/edit', $stream}">{xen:phrase edit}</a>
+					<span class="secondaryContent" style="width:100px;background:transparent;">
+						<xen:if is="{$stream.stream_type} == 0">
+							Justin.tv/Twitch.tv
+							<xen:elseif is="{$stream.stream_type} == 1"/>
+							Own3d.tv
+							<xen:elseif is="{$stream.stream_type} == 2"/>
+							Livestream.com
+						</xen:if>
+					</span>
+				</xen:html>
+			</xen:listitem>
+		</xen:foreach>
+	</ol>
+	<p class="sectionFooter">{xen:phrase showing_x_of_y_items, 'count=<span class="FilterListCount">{xen:count $streams}</span>', 'total={xen:count $streams}'}</p>
+
+		
+</xen:form>]]></template>
+  </admin_templates>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="navigation_tabs" execute_order="50" callback_class="Ice_EmbedStreams_Listener_NavTab" callback_method="createTab" active="1" description="Adds a LiveStream tab to the navigation tabs."/>
+    <listener event_id="template_hook" execute_order="9" callback_class="Ice_EmbedStreams_Listener_TemplateHook" callback_method="templateHook" active="1" description=""/>
+  </code_event_listeners>
+  <cron>
+    <entry entry_id="Ice_LiveStreams_Update" cron_class="Ice_EmbedStreams_CronEntry_LiveStreams" cron_method="updateLiveStreams" active="1"><![CDATA[{"day_type":"dom","dom":["-1"],"hours":["-1"],"minutes":["-1"]}]]></entry>
+  </cron>
+  <email_templates/>
+  <optiongroups>
+    <group group_id="Ice_LiveStreams" display_order="99" debug_only="0"/>
+    <option option_id="display_stream_tab" edit_format="onoff" data_type="boolean" can_backup="1">
+      <default_value>true</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="Ice_LiveStreams" display_order="200"/>
+    </option>
+    <option option_id="sidebar_streams" edit_format="onoff" data_type="string" can_backup="1">
+      <default_value>false</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="Ice_LiveStreams" display_order="300"/>
+    </option>
+    <option option_id="stream_height" edit_format="spinbox" data_type="positive_integer" can_backup="1">
+      <default_value>250</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="Ice_LiveStreams" display_order="10"/>
+    </option>
+    <option option_id="stream_height_large" edit_format="spinbox" data_type="integer" can_backup="1">
+      <default_value>360</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="Ice_LiveStreams" display_order="60"/>
+    </option>
+    <option option_id="stream_hook" edit_format="onoff" data_type="string" can_backup="1">
+      <default_value>true</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="Ice_LiveStreams" display_order="210"/>
+    </option>
+    <option option_id="stream_width" edit_format="spinbox" data_type="positive_integer" can_backup="1">
+      <default_value>400</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="Ice_LiveStreams" display_order="2"/>
+    </option>
+    <option option_id="stream_width_large" edit_format="spinbox" data_type="integer" can_backup="1">
+      <default_value>640</default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <relation group_id="Ice_LiveStreams" display_order="55"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="admin_navigation_Ice_LiveStreams_Edit" version_id="1" version_string="0.0.1"><![CDATA[Edit Streams]]></phrase>
+    <phrase title="admin_navigation_ice_livestreams_options" version_id="1" version_string="0.0.1"><![CDATA[Display Options]]></phrase>
+    <phrase title="admin_navigation_Ice_Streams" version_id="1" version_string="0.0.1"><![CDATA[Live Streams]]></phrase>
+    <phrase title="admin_permission_manageStreams" version_id="1" version_string="0.0.1"><![CDATA[[Ice] Stream Administration]]></phrase>
+    <phrase title="cron_entry_Ice_LiveStreams_Update" version_id="1" version_string="0.0.1"><![CDATA[Update "Live" Status for Streams]]></phrase>
+    <phrase title="ice_livestreams_editstream" version_id="14" version_string="1.1.1"><![CDATA[Edit Streams]]></phrase>
+    <phrase title="ice_livestream_addnew" version_id="14" version_string="1.1.1"><![CDATA[Add New Live Stream]]></phrase>
+    <phrase title="ice_livestream_addstream" version_id="14" version_string="1.1.1"><![CDATA[Add Stream]]></phrase>
+    <phrase title="ice_livestream_administrate" version_id="14" version_string="1.1.1"><![CDATA[Administrate Live Streams]]></phrase>
+    <phrase title="ice_livestream_areyousure" version_id="14" version_string="1.1.1"><![CDATA[Are you sure you want to delete this stream?]]></phrase>
+    <phrase title="ice_livestream_communitystreams" version_id="14" version_string="1.1.1"><![CDATA[Community Streams]]></phrase>
+    <phrase title="ice_livestream_confirmdelete" version_id="14" version_string="1.1.1"><![CDATA[Please confirm stream deletion]]></phrase>
+    <phrase title="ice_livestream_deletestream" version_id="14" version_string="1.1.1"><![CDATA[Delete Stream]]></phrase>
+    <phrase title="ice_livestream_edit" version_id="14" version_string="1.1.1"><![CDATA[Edit Live Stream]]></phrase>
+    <phrase title="ice_livestream_jtvuser" version_id="0" version_string=""><![CDATA[J.tv/Twitch username]]></phrase>
+    <phrase title="ice_livestream_livestreams" version_id="14" version_string="1.1.1"><![CDATA[Live Streams]]></phrase>
+    <phrase title="ice_livestream_manage" version_id="14" version_string="1.1.1"><![CDATA[Manage Stream]]></phrase>
+    <phrase title="ice_livestream_online" version_id="14" version_string="1.1.1"><![CDATA[Online]]></phrase>
+    <phrase title="ice_livestream_onlinelivestreams" version_id="15" version_string="1.2"><![CDATA[Online Live Streams]]></phrase>
+    <phrase title="ice_livestream_save" version_id="14" version_string="1.1.1"><![CDATA[Save Stream]]></phrase>
+    <phrase title="ice_livestream_stream" version_id="14" version_string="1.1.1"><![CDATA['s Stream]]></phrase>
+    <phrase title="ice_livestream_streamplain" version_id="14" version_string="1.1.1"><![CDATA[Stream]]></phrase>
+    <phrase title="ice_livestream_streamtype" version_id="15" version_string="1.2"><![CDATA[Stream Site]]></phrase>
+    <phrase title="ice_livestream_streamuserid" version_id="15" version_string="1.2"><![CDATA[Stream User ID]]></phrase>
+    <phrase title="ice_livestream_streamusername" version_id="15" version_string="1.2"><![CDATA[Stream Username]]></phrase>
+    <phrase title="ice_livestream_viewstreams" version_id="20" version_string="1.3"><![CDATA[View Streams]]></phrase>
+    <phrase title="ice_livestream_xenforousername" version_id="15" version_string="1.2"><![CDATA[XenForo Username]]></phrase>
+    <phrase title="option_display_stream_tab" version_id="15" version_string="1.2"><![CDATA[Display LiveStream tab]]></phrase>
+    <phrase title="option_display_stream_tab_explain" version_id="15" version_string="1.2"><![CDATA[If enabled, a tab will appear on the main nav links linking your users to a page that includes all of the online live streams you have specified in the ACP.]]></phrase>
+    <phrase title="option_group_Ice_LiveStreams" version_id="15" version_string="1.2"><![CDATA[[Ice] LiveStream Options]]></phrase>
+    <phrase title="option_group_Ice_LiveStreams_description" version_id="1" version_string="0.0.1"><![CDATA[Basic display options for the LiveStream add-on.]]></phrase>
+    <phrase title="option_sidebar_streams" version_id="15" version_string="1.2"><![CDATA[Show online streams in sidebar]]></phrase>
+    <phrase title="option_sidebar_streams_explain" version_id="15" version_string="1.2"><![CDATA[If enabled, this will use the <code>forum_list_sidebar</code> template hook to display the streams in your sidebar. If you would like to display this block somewhere else, add <code>&lt;xen:hook name="ice_livestreams_sidebar"/&gt;</code> to the template.]]></phrase>
+    <phrase title="option_stream_height" version_id="1" version_string="0.0.1"><![CDATA[Embedded Stream Height]]></phrase>
+    <phrase title="option_stream_height_explain" version_id="15" version_string="1.2"><![CDATA[]]></phrase>
+    <phrase title="option_stream_height_large" version_id="20" version_string="1.3"><![CDATA[Stream Height (Large)]]></phrase>
+    <phrase title="option_stream_height_large_explain" version_id="20" version_string="1.3"><![CDATA[Large streams will show up on the dedicated live streams page in this size.]]></phrase>
+    <phrase title="option_stream_hook" version_id="15" version_string="1.2"><![CDATA[Enable Stream Hook]]></phrase>
+    <phrase title="option_stream_hook_explain" version_id="15" version_string="1.2"><![CDATA[If enabled, you can use <code>&lt;xen:hook name="ice_livestreams_display" /&gt;</code> to embed a collapsing list of streams wherever you would like on your board. <b>If you would like to keep the streams above your forum list, keep this enabled.</b>]]></phrase>
+    <phrase title="option_stream_width" version_id="1" version_string="0.0.1"><![CDATA[Embedded Stream Width]]></phrase>
+    <phrase title="option_stream_width_explain" version_id="15" version_string="1.2"><![CDATA[]]></phrase>
+    <phrase title="option_stream_width_large" version_id="15" version_string="1.2"><![CDATA[Stream Width (Large)]]></phrase>
+    <phrase title="option_stream_width_large_explain" version_id="15" version_string="1.2"><![CDATA[]]></phrase>
+  </phrases>
+  <route_prefixes>
+    <route_type type="admin">
+      <prefix original_prefix="livestreams" class="Ice_EmbedStreams_Route_PrefixAdmin_Manage" build_link="data_only"/>
+    </route_type>
+    <route_type type="public">
+      <prefix original_prefix="livestreams" class="Ice_EmbedStreams_Route_Prefix_PageView" build_link="data_only"/>
+    </route_type>
+  </route_prefixes>
+  <style_properties/>
+  <templates>
+    <template title="ice_livestream.css" version_id="15" version_string="1.2"><![CDATA[.streams{
+	display:-moz-inline-box;
+	display:inline-block;
+	width:{$full_width}px;
+	height:{$disp_height}px;
+	max-height:{$disp_height}px;
+	white-space:nowrap;
+	*display:inline;
+}
+
+#streamContainer{
+	overflow-x: auto;
+	overflow-y: hidden;
+	width: auto;
+}
+
+.stream{
+	display: inline-block;
+	margin-top:7px;
+	margin-bottom:7px;
+	height:{$disp_height}px;
+	width:{$disp_width}px;
+	padding-right:10px;
+	padding-left:10px;
+	border-right: 1px solid {xen:property primaryLight};
+	zoom:1; 
+	_height: {$disp_height}px;
+}
+
+.stream .titleBlock{
+	font-weight:bold;
+	text-align:center;
+	margin-bottom:5px;
+}
+
+.stream .expandBlock{
+	text-align:center;
+}
+
+.avatarTiny img{
+	width:16px;
+	height:16px;
+	vertical-align:middle;
+	padding: 0;
+	border:none;
+}
+]]></template>
+    <template title="ice_livestream_forumdisplay" version_id="15" version_string="1.2"><![CDATA[<xen:require css="ice_livestream.css" />
+<xen:include template="ice_streams_js"/>
+
+<div class="section sectionMain nodeList">
+	<div class="nodeinfo categoryNodeInfo categoryStrip">		
+		<div class="categoryText">
+			<h3 class="nodeTitle">{xen:phrase ice_livestream_communitystreams} (<span id="streamnum">{$stream_num}</span> {xen:phrase ice_livestream_online})
+				<div style="float:right;">
+					<a id="toggleStreams" OnClick="toggleStreams()" href="javascript: void(0)">{xen:phrase hide}</a>
+				</div>
+			</h3>
+		</div>
+	</div>
+	
+	<div id="streamContainer">
+		<div class="streams">
+			<xen:foreach loop="$streams" value="$stream" >
+				<xen:include template="ice_livestream_stream_item" />
+			</xen:foreach>
+									
+		</div>
+		
+	</div>
+
+</div>
+
+<script type="text/javascript">
+	if(getCookie("livestream_popup")=="0"){
+		toggleStreams();
+	}
+		
+	if(document.getElementById("streamnum").innerHTML == "0"){
+		document.getElementById("streamContainer").style.display = "none";
+		document.getElementById("toggleStreams").style.display = "none";
+	}
+		
+	if(document.getElementById("streamnum").innerHTML != "0"){
+		document.getElementById("onlinebit").style.color = "green";
+	}
+</script>
+]]></template>
+    <template title="ice_livestream_pagedisplay" version_id="15" version_string="1.2"><![CDATA[<xen:require css="ice_livestream.css" />
+
+<xen:title>{xen:phrase ice_livestream_livestreams}</xen:title>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:link 'livestreams'}">{xen:phrase ice_livestream_livestreams}</xen:breadcrumb>
+</xen:navigation>
+
+<div class="section sectionMain">
+	<div id="streamContainer">
+		<div class="streams">
+			<xen:foreach loop="$streams" value="$stream" >
+				<xen:include template="ice_livestream_stream_item" />
+			</xen:foreach>				
+		</div>
+	</div>
+</div>
+]]></template>
+    <template title="ice_livestream_sidebar" version_id="20" version_string="1.3"><![CDATA[<xen:if is="{$stream_num} > 0">	
+<div class="section">
+    <div class="secondaryContent">
+        <h3>{xen:phrase ice_livestream_onlinelivestreams}</h3>
+			
+		<div>
+	
+		<xen:foreach loop="$streams" value="$stream" i="$i">
+			<xen:username user="$stream" rich="true" /><xen:if is="{$i} < {$stream_num}">,</xen:if>
+		</xen:foreach>
+						
+		</div>
+		<br />
+		<a href="{xen:link 'livestreams'}">{xen:phrase ice_livestream_viewstreams}</a>
+
+	</div>
+</div>
+</xen:if>]]></template>
+    <template title="ice_livestream_stream_item" version_id="15" version_string="1.2"><![CDATA[<div class="stream">
+	<div class="titleBlock">
+		{$stream.username}{xen:phrase ice_livestream_stream}
+	</div>
+	<xen:if is="{$stream.stream_type}==0">
+		<object type="application/x-shockwave-flash" height="{$stream_height}" width="{$stream_width}" id="live_embed_player_flash" data="http://www.twitch.tv/widgets/live_embed_player.swf?channel={$stream.stream_username}" bgcolor="#000000"><param name="allowFullScreen" value="true" /><param name="wmode" value="transparent" /><param name="allowScriptAccess" value="always" /><param name="allowNetworking" value="all" /><param name="movie" value="http://www.twitch.tv/widgets/live_embed_player.swf" /><param name="flashvars" value="hostname=www.twitch.tv&channel={$stream.stream_username}&auto_play=false&start_volume=25" /></object>
+	<xen:elseif is="{$stream.stream_type}==1"/>
+		<iframe height="{$stream_height}" width="{$stream_width}" frameborder="0" src="http://www.own3d.tv/liveembed/249035"></iframe>
+	</xen:if>
+</div>]]></template>
+    <template title="ice_streams_js" version_id="14" version_string="1.1.1"><![CDATA[<script type="text/javascript">
+
+function setCookie(c_name,value,exdays)
+{
+var exdate=new Date();
+exdate.setDate(exdate.getDate() + exdays);
+var c_value=escape(value) + ((exdays==null) ? "" : "; expires="+exdate.toUTCString());
+document.cookie=c_name + "=" + c_value;
+}
+
+function getCookie(c_name)
+{
+var i,x,y,ARRcookies=document.cookie.split(";");
+for (i=0;i<ARRcookies.length;i++)
+{
+  x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+  y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+  x=x.replace(/^\s+|\s+$/g,"");
+  if (x==c_name)
+    {
+    return unescape(y);
+    }
+  }
+}
+	
+function toggleStreams(){
+	
+	var streamsBlock = document.getElementById('toggleStreams');
+	var streamContainer = document.getElementById('streamContainer');
+	
+	if(streamsBlock.innerHTML == "{xen:phrase hide}"){
+		streamContainer.style.display="none";
+		streamsBlock.innerHTML = "{xen:phrase show}";
+		setCookie("livestream_popup",0,100)
+	}else if(streamsBlock.innerHTML == "{xen:phrase show}"){
+		streamContainer.style.display="inherit";
+		streamsBlock.innerHTML = "{xen:phrase hide}";
+		setCookie("livestream_popup",1,100)
+	}
+	
+}
+
+</script>]]></template>
+  </templates>
+  <bb_code_media_sites/>
+  <template_modifications>
+    <modification title="Add LiveStreams to Forum List" template_title="forum_list" execute_order="10" modification_type="str_replace" callback_class="" callback_method="" description="Used by the LiveStream add-on to display the streams above the forum list." version_id="15" version_string="1.2" active="1">
+      <search_value><![CDATA[<xen:hook name="forum_list_nodes">
+	<xen:if is="{$renderedNodes}"><xen:include template="node_list" /></xen:if>
+</xen:hook>]]></search_value>
+      <replace_value><![CDATA[<xen:hook name="ice_livestreams_display" />
+<xen:hook name="forum_list_nodes">
+	<xen:if is="{$renderedNodes}"><xen:include template="node_list" /></xen:if>
+</xen:hook>]]></replace_value>
+    </modification>
+  </template_modifications>
+</addon>

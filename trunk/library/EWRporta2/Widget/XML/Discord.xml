@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="Discord" widget_title="Discord" widget_desc="Adds a DiscordApp.com widget" widget_string="1" widget_version="1" widget_url="" widget_install_class="" widget_install_method="" widget_uninstall_class="" widget_uninstall_method="" ctime="">
+  <admin_templates/>
+  <listeners/>
+  <options>
+    <option option_id="discord_serverid" edit_format="textbox" data_type="string" display_order="1">
+      <default_value></default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <title>Server ID</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+    <option option_id="discord_theme" edit_format="radio" data_type="string" display_order="2">
+      <default_value>dark</default_value>
+      <edit_format_params>dark={xen:phrase dark}
+light={xen:phrase light}</edit_format_params>
+      <sub_options></sub_options>
+      <title>Theme</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+    <option option_id="discord_height" edit_format="spinbox" data_type="string" display_order="3">
+      <default_value>500</default_value>
+      <edit_format_params>min=400
+step=100</edit_format_params>
+      <sub_options></sub_options>
+      <title>Height</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_Discord"><![CDATA[<iframe width="100%" height="{$wOptions.discord_height}" scrolling="no" frameborder="0"
+	src="//discordapp.com/widget?id={$wOptions.discord_serverid}&theme={$wOptions.discord_theme}"></iframe>]]></template>
+  </templates>
+</widget>

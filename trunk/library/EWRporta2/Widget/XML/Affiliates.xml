@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="Affiliates" widget_title="Affiliate Links" widget_desc="Displays a block with a random affiliate links" widget_string="1" widget_version="1" widget_url="" widget_install_class="" widget_install_method="" widget_uninstall_class="" widget_uninstall_method="" ctime="">
+  <admin_templates>
+    <template title="EWRwidget_Affiliates_Option"><![CDATA[<xen:require js="js/xenforo/options_censor.js" />
+
+<xen:controlunit label="{$preparedOption.title}" hint="{$preparedOption.hint}">
+	<xen:explain>{xen:raw $preparedOption.explain}</xen:explain>
+	<xen:html>
+		<ul>
+			<xen:foreach loop="$choices" key="$counter" value="$choice">
+			<li>
+				<xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$counter}][title]" value="{$choice.title}" placeholder="{xen:phrase title}" size="30" />
+				<xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$counter}][link]" value="{$choice.link}" placeholder="{xen:phrase link}" size="50" />
+				<br /> &nbsp; &nbsp; &raquo; <xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$counter}][image]" value="{$choice.image}" placeholder="{xen:phrase image}" size="70" />
+			</li>
+			</xen:foreach>
+		
+			<li class="CensorWordOptionListener">
+				<xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$nextCounter}][title]" value="" placeholder="{xen:phrase title}" size="30" />
+				<xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$nextCounter}][link]" value="" placeholder="{xen:phrase link}" size="50" />
+				<br /> &nbsp; &nbsp; &raquo; <xen:textbox name="{$fieldPrefix}[{$preparedOption.option_id}][{$nextCounter}][image]" value="" placeholder="{xen:phrase image}" size="80" />
+			</li>
+		</ul>
+		
+		<input type="hidden" name="{$listedFieldName}" value="{$preparedOption.option_id}" />
+		{xen:raw $editLink}
+	</xen:html>
+</xen:controlunit>]]></template>
+  </admin_templates>
+  <listeners/>
+  <options>
+    <option option_id="affiliates_links" edit_format="callback" data_type="array" display_order="1" validation_class="EWRporta2_Widget_Option_Affiliates" validation_method="verifyOption">
+      <default_value></default_value>
+      <edit_format_params>EWRporta2_Widget_Option_Affiliates::renderOption</edit_format_params>
+      <sub_options>*</sub_options>
+      <title>Affiliate Links</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+    <option option_id="affiliates_display" edit_format="radio" data_type="string" display_order="2">
+      <default_value>showall</default_value>
+      <edit_format_params>random=Random
+shuffle=Shuffled
+showall=Show All</edit_format_params>
+      <sub_options></sub_options>
+      <title>Display Style</title>
+      <explain><![CDATA[You can choose to show all affiliate links, or display only one at random]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_Affiliates"><![CDATA[<div class="section widget_{$wWidget}" id="widget_{$wWidlink}">
+    <div class="secondaryContent">
+        <h3>{$wTitle}</h3>
+
+	<div style="text-align: center;">
+		<xen:foreach loop="$wUncached" value="$affiliate">
+			<a href="{$affiliate.link}" target="_blank" title="{$affiliate.title}"><img src="{$affiliate.image}" /></a><br />
+		</xen:foreach>
+	</div>
+    </div>
+</div>]]></template>
+  </templates>
+</widget>

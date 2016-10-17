@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget widget_id="FbLikeBox" widget_title="Facebook Page" widget_desc="Displays a Page Widget from Facebook" widget_string="1" widget_version="1" widget_url="" widget_install_class="" widget_install_method="" widget_uninstall_class="" widget_uninstall_method="" ctime="">
+  <admin_templates/>
+  <listeners/>
+  <options>
+    <option option_id="fblikebox_page" edit_format="textbox" data_type="string" display_order="1">
+      <default_value></default_value>
+      <edit_format_params></edit_format_params>
+      <sub_options></sub_options>
+      <title>Page URL</title>
+      <explain><![CDATA[This is the URL to the Facebook page to which this Like Box will belong.]]></explain>
+    </option>
+    <option option_id="fblikebox_height" edit_format="spinbox" data_type="unsigned_integer" display_order="2">
+      <default_value>500</default_value>
+      <edit_format_params>min=200
+step=100</edit_format_params>
+      <sub_options></sub_options>
+      <title>Height</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+    <option option_id="fblikebox_options" edit_format="checkbox" data_type="array" display_order="3">
+      <default_value>a:5:{s:5:"cover";s:1:"1";s:5:"small";b:0;s:8:"facepile";s:1:"1";s:5:"posts";s:1:"1";s:3:"cta";b:0;}</default_value>
+      <edit_format_params>cover=Show Page Cover
+small=Show Small Header
+facepile=Show Face Pile
+posts=Show Timeline
+cta=Show Custom CtA</edit_format_params>
+      <sub_options>cover
+small
+facepile
+posts
+cta</sub_options>
+      <title>Options</title>
+      <explain><![CDATA[]]></explain>
+    </option>
+  </options>
+  <phrases/>
+  <templates>
+    <template title="EWRwidget_FbLikeBox"><![CDATA[<div class="section widget_{$wWidget}" id="widget_{$wWidlink}">
+	<div class="secondaryContent">
+		<h3>{$wTitle}</h3>
+		<script src="//connect.facebook.net/en_US/all.js#xfbml=1"></script>
+		
+		<div class="fbLikeBox">
+			<div class="fb-page" data-href="{$wOptions.fblikebox_page}"
+				data-width="500" data-height="{$wOptions.fblikebox_height}"
+				data-hide-cover="{xen:if $wOptions.fblikebox_options.cover, 'false', 'true'}"
+				data-small-header="{xen:if $wOptions.fblikebox_options.small, 'true', 'false'}"
+				data-show-facepile="{xen:if $wOptions.fblikebox_options.facepile, 'true', 'false'}"
+				data-show-posts="{xen:if $wOptions.fblikebox_options.posts, 'true', 'false'}"
+				data-hide-cta="{xen:if $wOptions.fblikebox_options.cta, 'false', 'true'}"></div>
+		</div>
+	</div>
+</div>]]></template>
+  </templates>
+</widget>
